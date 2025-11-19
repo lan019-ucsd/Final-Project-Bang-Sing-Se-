@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earthquake Project</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Leaflet CSS (for map functionality) -->
+    <link 
+        rel="stylesheet" 
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+        crossorigin=""
+    />
+
+</head>
+
+<body>
+
+    <!-- Header / Hero Section -->
+    <header class="hero">
+        <h1>Earthquake Visualization Project</h1>
+        <p>Understanding magnitude, depth, and global impact</p>
+    </header>
+
+    <!-- Main Content Wrapper -->
+    <main>
+
+        <!-- Section 1: Map container -->
+        <section id="map-section">
+            <h2>Global Earthquake Map</h2>
+            <div id="map"></div>
+        </section>
+
+        <!-- Section 2: Info / Storytelling -->
+        <section id="story">
+            <h2>Why Do Earthquakes Happen?</h2>
+            <p>As you scroll, you will explore how magnitude, depth, and location affect earthquake impact.</p>
+        </section>
+
+    </main>
+
+    <!-- JS Libraries -->
+    <script 
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-o9N1j7kP6R/dwF3cY1clf8Bsu1MAyPdX4R1jv7u1W/k="
+        crossorigin="">
+    </script>
+
+    <!-- Your JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
