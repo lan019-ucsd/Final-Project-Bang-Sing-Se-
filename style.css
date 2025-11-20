@@ -24,7 +24,7 @@ html, body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: linear-gradient(to bottom, #d0d7e7, #758bbb);
+    background: linear-gradient(to bottom, #d0d7e7, #475a83);
     color: #fff;
 }
 
@@ -39,6 +39,59 @@ html, body {
     max-width: 850px;
     line-height: 1.5;
 }
+/* Earth Layers */
+.full-page {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Page 2 Earth Layers */
+.earth-structure-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    gap: 2rem;
+}
+
+#earth-structure-plot {
+    width: 70%;
+    height: 70%;
+    position: relative;
+}
+
+/* Add simple 3D effect with skewed layers */
+.layer {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.layer:hover {
+    transform: scale(1.05) translateZ(5px);
+}
+
+
+/* Responsive */
+@media (max-width: 900px) {
+    .earth-structure-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #earth-structure-plot,
+    #earth-layer-info {
+        width: 90%;
+        text-align: center;
+    }
+}
+
 
 /* ========================== */
 /* MAP + GLOBE SECTION */
@@ -49,10 +102,11 @@ html, body {
     justify-content: flex-start;
     align-items: flex-start;
     padding: 2rem;
+    height: 100%
 }
 
 #map-section {
-    background: linear-gradient(to bottom, #758bbb, #3b465a);
+    background: linear-gradient(to bottom, #475a83, #1f2a3f);
 }
 
 
@@ -67,10 +121,16 @@ html, body {
 }
 
 /* SVG settings */
-#globe-svg, #globe-svg-2 {
+#globe-svg {
     width: 100%;
-    height: auto;
-    max-height: 80vh;
+    height: 100%;
+    max-height: 100vh;
+}
+
+#globe-svg-2 {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
 }
 
 /* Story text */
@@ -111,8 +171,11 @@ html, body {
     justify-content: flex-start;
     align-items: flex-start;
     padding: 2rem;
-    background: linear-gradient(to bottom, #3b465a, #232c3c); /* same gradient as globe 1 */
+    background: linear-gradient(to bottom, #1f2a3f, #0a1220); /* same gradient as globe 1 */
 }
+
+
+
 
 /* Tooltip */
 #globe-tooltip {
