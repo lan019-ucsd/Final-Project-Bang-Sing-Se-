@@ -24,7 +24,7 @@ html, body {
     align-items: center;
     text-align: center;
     padding: 0 1rem;
-    background: linear-gradient(to bottom, #214598, #1b263b);
+    background: linear-gradient(to bottom, #95a7d1, #202839);
     color: #fff;
 }
 
@@ -48,7 +48,7 @@ html, body {
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    background-color: #3c1a1a;
+    background: linear-gradient(to bottom, #202839, #030a16);
 }
 
 .globe-container {
@@ -60,9 +60,15 @@ html, body {
 }
 
 #globe-svg {
-    width: 100%;
-    height: auto;
+    display: block;
+    margin: 0 auto;
 }
+
+body {
+    background: black; /* page background black */
+    color: white;      /* default text white */
+}
+
 
 .story-text {
     flex: 1;

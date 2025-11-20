@@ -1,8 +1,10 @@
-// Set up SVG dimensions
 const width = 600;
 const height = 600;
 
-const svg = d3.select("#globe-svg");
+const svg = d3.select("#globe-svg")
+    .attr("width", width)
+    .attr("height", height)
+    .style("background", "linear-gradient(to bottom, #202839, #030a16)"); // black background
 
 const projection = d3.geoOrthographic()
     .scale(250)
@@ -15,8 +17,9 @@ const path = d3.geoPath().projection(projection);
 svg.append("path")
     .datum({type: "Sphere"})
     .attr("d", path)
-    .attr("fill", "#1b263b")
-    .attr("stroke", "#ffffff");
+    .attr("fill", "#000")        // black globe
+    .attr("stroke", "#fff")      // white outline
+    .attr("stroke-width", 0.5);
 
 // Load world data
 d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(worldData => {
@@ -28,43 +31,38 @@ d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(worldData =>
         .append("path")
         .attr("class", "country")
         .attr("d", path)
-        .attr("fill", "#214598")
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 0.5);
-
-    // Sample earthquake points
-    const earthquakes = [
-        { lat: 35, lng: 139 },   // Japan
-        { lat: 37, lng: -122 },  // California
-        { lat: -16, lng: -72 }   // Peru
-    ];
-
-    svg.selectAll(".quake")
-        .data(earthquakes)
-        .enter()
-        .append("circle")
-        .attr("class", "quake")
-        .attr("cx", d => projection([d.lng, d.lat])[0])
-        .attr("cy", d => projection([d.lng, d.lat])[1])
-        .attr("r", 5)
-        .attr("fill", "red")
-        .attr("stroke", "#fff")
+        .attr("fill", "#000")         // black country fill
+        .attr("stroke", "#fff")       // white outline
         .attr("stroke-width", 0.5)
         .on("mouseover", function(event, d) {
-            d3.select(this).attr("r", 8).attr("fill", "orange");
+            d3.select(this).attr("fill", "#1e90ff"); // blue on hover
         })
         .on("mouseout", function(event, d) {
-            d3.select(this).attr("r", 5).attr("fill", "red");
+            d3.select(this).attr("fill", "#000");    // back to black
         });
 });
 
-// Auto-rotation
-let rotate = [0, 0];
-d3.timer(function(elapsed) {
-    rotate[0] = elapsed * 0.02; // rotate around vertical axis
-    projection.rotate(rotate);
-    svg.selectAll("path").attr("d", path);
-    svg.selectAll("circle")
-        .attr("cx", d => projection([d.lng, d.lat])[0])
-        .attr("cy", d => projection([d.lng, d.lat])[1]);
-});
+// Keep track of rotation for dragging
+let rotate = [0, -20];
+let lastX, lastY;
+
+svg.call(d3.drag()
+    .on("start", function(event) {
+        lastX = event.x;
+        lastY = event.y;
+    })
+    .on("drag", function(event) {
+        const dx = event.x - lastX;
+        const dy = event.y - lastY;
+        lastX = event.x;
+        lastY = event.y;
+
+        rotate[0] += dx * 0.5;
+        rotate[1] -= dy * 0.5;
+        rotate[1] = Math.max(-90, Math.min(90, rotate[1]));
+
+        projection.rotate(rotate);
+
+        svg.selectAll("path").attr("d", path);
+    })
+);
