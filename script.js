@@ -9,8 +9,7 @@ myGlobe.controls().autoRotate = false;
 myGlobe.controls().autoRotateSpeed = 0.3;
 myGlobe.controls().enableZoom = false;
 
-
-// Optional: Add points (example earthquake locations)
+// Example earthquake points
 const sampleQuakes = [
     { lat: 35, lng: 139, size: 0.5 },  // Japan
     { lat: 37, lng: -122, size: 0.4 }, // California
