@@ -7,94 +7,58 @@ const tooltip = d3.select("#globe-tooltip");
 // PAGE 2: EARTH LAYERS PLOT
 // ==========================
 
+// JavaScript (D3)
 const layers = [
-  { name: "Crust", 
-    color: "#d2c6a4ff", 
-    description: "Earth's outermost & thinnest layer that stretches approximately 5km thick under ocean floor and 30km thick under continents", 
-    thickness: 40 },
-  { name: "Lithosphere", 
-    color: "#8e8174ff", 
-    description: "…", 
-    thickness: 30 },
-  { name: "Asthenosphere", 
-    color: "#5b4c3dff", 
-    description: "…", 
-    thickness: 50 },
-  { name: "Mantle", 
-    color: "#3a3637ff", 
-    description: "…", 
-    thickness: 70 },
+  { name: "Crust", color: "#d2c6a4", description: "Earth’s outer crust: thin and rigid", innerRadius: 130, outerRadius: 150 },
+  { name: "Lithosphere", color: "#8e8174", description: "Lithosphere: crust + upper mantle, rigid tectonic plates", innerRadius: 100, outerRadius: 130 },
+  { name: "Asthenosphere", color: "#5b4c3d", description: "Asthenosphere: partially molten, flows slowly", innerRadius: 70, outerRadius: 100 },
+  { name: "Mantle", color: "#3a3637", description: "Mantle: hot, convecting rock that makes up most of Earth’s volume", innerRadius: 20, outerRadius: 70 },
 ];
 
-const width = 300;
-const height = 500;
+const width = 400;
+const height = 400;
 
 const svg = d3.select("#earth-structure-plot")
   .append("svg")
   .attr("viewBox", `0 0 ${width} ${height}`)
   .attr("width", "100%")
-  .attr("height", "100%");
+  .attr("height", "100%")
+  .append("g")
+  .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
-const defs = svg.append("defs");
+// Define arcs
+layers.forEach((layer) => {
+  const arc = d3.arc()
+    .innerRadius(layer.innerRadius)
+    .outerRadius(layer.outerRadius)
+    .startAngle(-Math.PI / 2)
+    .endAngle(Math.PI / 2);
 
-layers.forEach((layer, i) => {
-  const grad = defs.append("linearGradient")
-    .attr("id", `grad-${i}`)
-    .attr("x1", "0%")
-    .attr("y1", "0%")
-    .attr("x2", "0%")
-    .attr("y2", "100%");  // vertical gradient
-
-grad.append("stop")
-    .attr("offset", "0%")
-    .attr("stop-color", d3.rgb(layer.color).brighter(0.7));
-  grad.append("stop")
-    .attr("offset", "100%")
-    .attr("stop-color", d3.rgb(layer.color).darker(0.7));
-});
-
-let currentY = 0;
-const totalThickness = d3.sum(layers, d => d.thickness);
-
-layers.forEach((layer, i) => {
-  const layerHeight = (layer.thickness / totalThickness) * height;
-
-  svg.append("rect")
-    .attr("x", 0)
-    .attr("y", currentY)
-    .attr("width", width)
-    .attr("height", layerHeight)
-    .attr("fill", `url(#grad-${i})`)  // use gradient here
-    .attr("class", "layer")
+  svg.append("path")
+    .attr("d", arc())
+    .attr("fill", layer.color)
+    .attr("class", "layer-slice")
     .on("mouseover", (event) => {
-      d3.select("#earth-layer-info").html(layer.description);
-      svg.selectAll(".layer").attr("opacity", 0.7);
+      d3.select("#earth-layer-info")
+        .html(`<strong>${layer.name}</strong><br>${layer.description}`);
+      svg.selectAll(".layer-slice").attr("opacity", 0.6);
       d3.select(event.currentTarget).attr("opacity", 1);
     })
     .on("mouseout", () => {
-      d3.select("#earth-layer-info").text("Hover over a layer to see details.");
-      svg.selectAll(".layer").attr("opacity", 1);
-    })
-    .on("click", (event) => {
-      const rect = d3.select(event.currentTarget);
-      rect.transition()
-          .duration(400)
-          .attr("transform", `translate(-5, -5) scale(1.05)`)
-        .transition()
-          .duration(400)
-          .attr("transform", `translate(0,0) scale(1)`);
+      d3.select("#earth-layer-info").html("Hover over a layer to see details.");
+      svg.selectAll(".layer-slice").attr("opacity", 1);
     });
-
+  
+  // Optionally add a text label
+  const centroid = arc.centroid();
   svg.append("text")
-    .attr("x", width / 2)
-    .attr("y", currentY + layerHeight / 2)
-    .attr("text-anchor", "middle")
+    .attr("x", centroid[0] * 1.1)
+    .attr("y", centroid[1] * 1.1)
+    .attr("text-anchor", centroid[0] > 0 ? "start" : "end")
     .attr("alignment-baseline", "middle")
     .attr("fill", "#fff")
-    .style("pointer-events", "none")
-    .text(layer.name);
-
-  currentY += layerHeight;
+    .text(layer.name)
+    .style("pointer-events", "none");
 });
 
 
