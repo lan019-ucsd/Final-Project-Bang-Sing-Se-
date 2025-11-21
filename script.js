@@ -1,3 +1,32 @@
+const dots = document.querySelectorAll(".nav-dot");
+const sections = [document.querySelector(".hero"),
+                  document.getElementById("earth-structure-section"),
+                  document.getElementById("map-section"),
+                  document.getElementById("country-detail-section")];
+
+// Scroll to section on dot click
+dots.forEach((dot, i) => {
+  dot.addEventListener("click", () => {
+    sections[i].scrollIntoView({ behavior: "smooth" });
+  });
+});
+
+// Highlight active dot on scroll
+window.addEventListener("scroll", () => {
+  const scrollPos = window.scrollY + window.innerHeight / 2;
+
+  sections.forEach((sec, idx) => {
+    const top = sec.offsetTop;
+    const bottom = top + sec.offsetHeight;
+
+    if (scrollPos >= top && scrollPos < bottom) {
+      dots.forEach(d => d.classList.remove("active"));
+      dots[idx].classList.add("active");
+    }
+  });
+});
+
+
 // ==========================
 // TOOLTIP
 // ==========================
@@ -151,41 +180,6 @@ const countryMapSvg = d3.select("#country-map");
 let selectedCountry = null;
 let connectorPath = null;
 
-function drawConnector(){
-  // remove existing
-  if (connectorPath) connectorPath.remove();
-
-  const globeSvg = d3.select("#globe-svg-2").node();
-  const countrySvg = d3.select("#country-map").node();
-  const gBBox = globeSvg.getBoundingClientRect();
-  const cBBox = countrySvg.getBoundingClientRect();
-
-  const startX = gBBox.x + gBBox.width;
-  const startY = gBBox.y + gBBox.height / 2;
-  const endX = cBBox.x;
-  const endY = cBBox.y + cBBox.height / 2;
-
-  const connectorSvg = d3.select("#line-connector");
-
-  connectorPath = connectorSvg.append("path")
-    .attr("d", `M${startX},${startY} L${endX},${endY}`)
-    .attr("fill", "none")
-    .attr("stroke", "#fff")
-    .attr("stroke-width", 2)
-    .attr("stroke-dasharray", function() {
-      const len = this.getTotalLength();
-      return `${len} ${len}`;
-    })
-    .attr("stroke-dashoffset", function() {
-      return this.getTotalLength();
-    });
-
-  connectorPath.transition()
-    .duration(1000)
-    .ease(d3.easeLinear)
-    .attr("stroke-dashoffset", 0);
-}
-
 d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(worldData => {
   const countries = topojson.feature(worldData, worldData.objects.countries).features;
 
@@ -243,6 +237,42 @@ d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(worldData =>
 
   resizeGlobe2();
 });
+
+// Connector Globe 2 + Country
+function drawConnector(){
+  // remove existing
+  if (connectorPath) connectorPath.remove();
+
+  const globeSvg = d3.select("#globe-svg-2").node();
+  const countrySvg = d3.select("#country-map").node();
+  const gBBox = globeSvg.getBoundingClientRect();
+  const cBBox = countrySvg.getBoundingClientRect();
+
+  const startX = gBBox.x + gBBox.width;
+  const startY = gBBox.y + gBBox.height / 2;
+  const endX = cBBox.x;
+  const endY = cBBox.y + cBBox.height / 2;
+
+  const connectorSvg = d3.select("#line-connector");
+
+  connectorPath = connectorSvg.append("path")
+    .attr("d", `M${startX},${startY} L${endX},${endY}`)
+    .attr("fill", "none")
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", function() {
+      const len = this.getTotalLength();
+      return `${len} ${len}`;
+    })
+    .attr("stroke-dashoffset", function() {
+      return this.getTotalLength();
+    });
+
+  connectorPath.transition()
+    .duration(1000)
+    .ease(d3.easeLinear)
+    .attr("stroke-dashoffset", 0);
+}
 
 svg2.call(d3.drag()
   .on("start", event => { lastX2 = event.x; lastY2 = event.y; })
