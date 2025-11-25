@@ -79,7 +79,7 @@ section, .hero {
 /* Earth Layers */
 .full-page {
     width: 100vw;
-    height: 100vh;
+    height: fit-content;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
@@ -92,7 +92,9 @@ section, .hero {
 .info-box {
   margin-top: 1rem;
   color: #fff;
-  background: rgba(0,0,0,0.6);
+  background: rgba(247, 20, 20, 0.6);
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 5px;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 1rem;
@@ -112,14 +114,18 @@ section, .hero {
 }
 
 #earth-layer-info {
-  margin-top: 1rem;
-  padding: 8px;
+
+  margin-top: 1;        /* was 1rem */
+  margin-bottom: 50rem;     /* prevent extra space to nav dots */
+  padding: 8px 14px;
   background: rgba(0,0,0,0.6);
   color: white;
   border-radius: 4px;
   font-size: 1rem;
   text-align: center;
-  width: fit-content;
+  max-width: 80%;
+
+  white-space: pre-line;
 }
 
 
@@ -143,6 +149,27 @@ section, .hero {
     }
 }
 
+/* Force SVG to scale responsively but stay capped */
+#earth-structure-plot svg {
+    width: min(70vw, 1600px);
+    height: auto;
+    display: block;
+    margin: 1.5rem auto 0.5rem auto;  /* top, right/left, bottom */
+}
+
+.earth-layer-label {
+    fill: #fff;
+    font-weight: 600;
+    pointer-events: none;
+
+    /* CONTROLLED scaling */
+    font-size: clamp(1rem, 1.4vw, .5rem);
+
+    /* outline */
+    paint-order: stroke;
+    stroke: rgba(0, 0, 0, 0.8);
+    stroke-width: 3px;
+}
 
 /* ========================== */
 /* MAP + GLOBE SECTION */
@@ -167,7 +194,7 @@ section, .hero {
     flex: 0 1 40%;
     min-width: 150px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -224,8 +251,6 @@ section, .hero {
     padding: 2rem;
     background: linear-gradient(to bottom, #1f2a3f, #0a1220); /* same gradient as globe 1 */
 }
-
-
 
 
 /* Tooltip */

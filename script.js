@@ -154,22 +154,27 @@ const tooltip = d3.select("#globe-tooltip");
 // PAGE 2: EARTH LAYERS PLOT
 // ==========================
 const layers = [
-  { name: "Crust", color: "#d2c6a4", description: "Earth’s outer crust: thin and rigid", innerRadius: 130, outerRadius: 150 },
-  { name: "Lithosphere", color: "#8e8174", description: "Lithosphere: crust + upper mantle, rigid tectonic plates", innerRadius: 100, outerRadius: 130 },
-  { name: "Asthenosphere", color: "#5b4c3d", description: "Asthenosphere: partially molten, flows slowly", innerRadius: 70, outerRadius: 100 },
-  { name: "Mantle", color: "#3a3637", description: "Mantle: hot, convecting rock that makes up most of Earth’s volume", innerRadius: 20, outerRadius: 70 },
+  { name: "Crust", color: "#268020ff", description: "Earth’s outer crust: thin and rigid", innerRadius: 130, outerRadius: 150 },
+  { name: "Lithosphere", color: "#c99664ff", description: "Lithosphere: crust + upper mantle, rigid tectonic plates", innerRadius: 100, outerRadius: 130 },
+  { name: "Asthenosphere", color: "#52463bff", description: "Asthenosphere: partially molten, flows slowly", innerRadius: 70, outerRadius: 100 },
+  { name: "Mantle", color: "#333232ff", description: "Mantle: hot, convecting rock that makes up most of Earth’s volume", innerRadius: 40, outerRadius: 70 },
+  { name: "Core", color: "#f18f26ff", description: "At the very, very center is the inner core.It's a solid ball of iron and nickel, even though it's the hottest part (as hot as the surface of the sun!) The reason it stays solid is because all the other layers push down on it with a huge amount of pressure", innerRadius: 0, outerRadius: 40 },
 ];
 
-const width2D = 400;
-const height2D = 400;
+// Manipulate the VIEW of page2
+const width2D = 450;
+const centerY = 400;
+const height2D = 330;
+
 
 const svg2D = d3.select("#earth-structure-plot")
   .append("svg")
-    .attr("viewBox", `0 0 ${width2D} ${height2D}`)
-    .attr("width", "100%")
-    .attr("height", "100%")
+  .attr("viewBox", `0 0 ${width2D} ${height2D}`)
+    // .attr("width", "100%")
+    // .attr("height", "100%")
+  .attr("preserveAspectRatio", "xMidYMid meet")
   .append("g")
-    .attr("transform", `translate(${width2D/2}, ${height2D/2})`);
+  .attr("transform", `translate(${width2D/2}, ${centerY/2})`);
 
 layers.forEach(layer => {
   const arcGen = d3.arc()
@@ -189,19 +194,22 @@ layers.forEach(layer => {
       d3.select(event.currentTarget).attr("opacity", 1);
     })
     .on("mouseout", () => {
-      d3.select("#earth-layer-info").html("Hover over a layer to see details.");
+      d3.select("#earth-layer-info").html("Let's show you a bit more about Earth's Layers! Hover over an individual layer for more details.");
       svg2D.selectAll(".layer-slice").attr("opacity", 1);
     });
 
-  const centroid = arcGen.centroid();
+  // Center the labels of the earth 
+  const labelRadius = (layer.innerRadius + layer.outerRadius) / 1.93;
+  const labelOffset = 12;
+
   svg2D.append("text")
-    .attr("x", centroid[0] * 1.1)
-    .attr("y", centroid[1] * 1.1)
-    .attr("text-anchor", centroid[0] > 0 ? "start" : "end")
+    .attr("x", 0)
+    .attr("y", -labelRadius + labelOffset)
+    .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
-    .attr("fill", "#fff")
-    .style("pointer-events", "none")
+    .attr("class", "earth-layer-label")
     .text(layer.name);
+
 });
 
 
