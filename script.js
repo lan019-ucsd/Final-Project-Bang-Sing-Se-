@@ -154,9 +154,9 @@ const tooltip = d3.select("#globe-tooltip");
 // PAGE 2: EARTH LAYERS PLOT
 // ==========================
 const layers = [
-  { name: "Crust", color: "#268020ff", description: "Earth’s outer crust: thin and rigid", innerRadius: 130, outerRadius: 150 },
-  { name: "Lithosphere", color: "#c99664ff", description: "Lithosphere: crust + upper mantle, rigid tectonic plates", innerRadius: 100, outerRadius: 130 },
-  { name: "Asthenosphere", color: "#52463bff", description: "Asthenosphere: partially molten, flows slowly", innerRadius: 70, outerRadius: 100 },
+  { name: "Crust", color: "#268020ff", description: "Earth’s outer crust: This is where we are! This layer includes both the continents and the ocean floor. Consider the Crust the solid outermost layer of a rocky planet or natural satellite.", innerRadius: 130, outerRadius: 150 },
+  { name: "Lithosphere", color: "#c99664ff", description: "Lithosphere: This layer is the outermost mechanical layer of Earth. This lithosphere includes the crust and ", innerRadius: 100, outerRadius: 130 },
+  { name: "Asthenosphere", color: "#52463bff", description: "Asthenosphere: Right underneathe the Lithosphere lies the Asthenosphere. This is not a liquid layer, but consider it a region of the mantle that flows easily. When we have layers atop each other, those plains will slowly shift over long periods of time. That's the flow we're referring to here.", innerRadius: 70, outerRadius: 100 },
   { name: "Mantle", color: "#333232ff", description: "Mantle: hot, convecting rock that makes up most of Earth’s volume", innerRadius: 40, outerRadius: 70 },
   { name: "Core", color: "#f18f26ff", description: "At the very, very center is the inner core.It's a solid ball of iron and nickel, even though it's the hottest part (as hot as the surface of the sun!) The reason it stays solid is because all the other layers push down on it with a huge amount of pressure", innerRadius: 0, outerRadius: 40 },
 ];
