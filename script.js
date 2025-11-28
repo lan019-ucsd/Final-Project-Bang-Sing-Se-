@@ -36,6 +36,7 @@ async function loadJSON(path) {
     return data
 }
 
+
 // Call the CSV loader function for Earthquake Spots (Func Caller & Callback)
 const earthquakeData = (await loadCSV("earthquakes.csv", 1000))
     .filter(d => 
@@ -154,22 +155,16 @@ const tooltip = d3.select("#globe-tooltip");
 
 
 // ==========================
-// PAGE 3: GLOBE 1
+// PAGE 3: GLOBE 1 & GLOBE Right
 // ==========================
-
-// ==========================
-// PAGE 3: GLOBE 1 Right
-// ==========================
-const svg1R = d3.select("#globe-svg-r");  // Make sure you have a container with this ID
-const path1R = d3.geoPath();
-const projection1R = d3.geoOrthographic().clipAngle(90);
-
 // GLOBAL VARIABLE INITIALIZATION -------------------------------------------->
 // Create D3 selection, & locate the SVG container, 
 const svg1 = d3.select("#globe-svg");
+const svg1R = d3.select("#globe-svg-r");
 
 // Define path generator: GeoJSON Data [longtitude, latitude in degree] --> SVG String Path [x, y in pixel]
 const path1 = d3.geoPath();
+const path1R = d3.geoPath();
 // Define projection callback: 
     // Azimuthal Projection:    Sphere --> Plane
     // Conic Projection:        Sphere --> Cone --> Plane
@@ -181,6 +176,7 @@ const path1 = d3.geoPath();
             // LINK: https://github.com/d3/d3-geo/blob/main/src/projection/index.js
         // 3. projection(orthographicRaw()).clipAngle(Radian) --> Clip to the visible hemisphere
 const projection1 = d3.geoOrthographic().clipAngle(90);
+const projection1R = d3.geoOrthographic().clipAngle(90);
 
 // Initialize orientation value for rotation when the page loads
     // rotate1[0] --> long rotation
@@ -191,11 +187,30 @@ let lastX1, lastY1;
 // ----------------------------------------------------------------------------
 
 // FUNCTION CALLING -----------------------------------------------------------
+// Create Base Sphere (Func Caller)
+plotBaseSphere(svg1, sphereData, 'globe-sphere1')
+// Handle drag behavior (Func Caller)
+drag_behavior(svg1)
+// Create Country Sphere (Func Caller)
+plotCountriesRegions(svg1, countryData, 'country1')
+// Create Earthquake Spots (Func Caller)
+plotEarthquakesPoints(svg1, earthquakeData)
+// Resize it when page first loaded (Func Caller)
+// Try remove it then it won't show up for page first load until you do something to the window to trigger it, i.e. inspect
+resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1');
+// Resize for Web Responsive Design (CSS Flex Display Simply Won't Help) (Event Listener Caller & Callback)
+window.addEventListener("resize", () => resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1'));
 
-// Handle DRAG ROTATION INTERACTIONS (Func Caller & Callback)
+// Same above for right globe
+plotBaseSphere(svg1R, sphereData, 'globe-sphere1R')
+drag_behavior(svg1R)
+plotCountriesRegions(svg1R, countryData, 'country1R')
+resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R');
+window.addEventListener("resize", () => resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R'));
+// ----------------------------------------------------------------------------
 
-
-// selection.call(d3.drag()) <--> d3.drag().apply(selection)
+// FUNCTION DEFINITION ------------------------------------------------------->
+// Handle DRAG ROTATION INTERACTIONS (Func Definer, Func Caller & Callback)
 // D3 Built-in Interactions:
     // Brush, Dispatch, Drag, Zoom
     // We use drag interaction here
@@ -242,36 +257,6 @@ const drag_behavior = d3.drag()
         lastY1 = event.y;
     })
 
-drag_behavior(svg1)
-drag_behavior(svg1R)
-
-// Create Base Sphere (Func Caller)
-plotBaseSphere(svg1, sphereData, 'globe-sphere1')
-
-// Create Country Sphere (Func Caller)
-plotCountriesRegions(svg1, countryData, 'country1')
-
-// Create Earthquake Spots (Func Caller)
-plotEarthquakesPoints(svg1, earthquakeData)
-
-// Resize it when page first loaded (Func Caller)
-// Try remove it then it won't show up for page first load until you do something to the window to trigger it, i.e. inspect
-resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1');
-
-// Resize for Web Responsive Design (CSS Flex Display Simply Won't Help) (Event Listener Caller & Callback)
-window.addEventListener("resize", () => resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1'));
-// --------------------------------------------------------------------------
-
-
-plotBaseSphere(svg1R, sphereData, 'globe-sphere1R')
-
-plotCountriesRegions(svg1R, countryData, 'country1R')
-
-resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R');
-
-window.addEventListener("resize", () => resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R'));
-
-// FUNCTION DEFINITION ----------------------------------------------------->
 // Function to plot blank sphere globe (Func Definer)
 function plotBaseSphere(selection, data, idName) {
     selection.append("path")
@@ -478,7 +463,7 @@ function isPointVisible(lon, lat, rotate) {
     // visible hemisphere
     return cosc > 0;
 }
-// --------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 
 // // ==========================
