@@ -129,157 +129,62 @@ document.addEventListener("DOMContentLoaded", () => {
     updateActiveDot();
 });
 
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestDot = dot;
-            }
-        });
-
-        if (closestDot) {
-            dots.forEach(d => d.classList.remove("active"));
-            closestDot.classList.add("active");
-        }
-    };
-
-    // Scroll to section on dot click
-    dots.forEach(dot => {
-        const targetId = dot.getAttribute("data-target");
-        const targetEl = document.getElementById(targetId);
-
-        dot.addEventListener("click", () => {
-            if (targetEl) {
-                targetEl.scrollIntoView({ behavior: "smooth" });
-                // highlight immediately
-                dots.forEach(d => d.classList.remove("active"));
-                dot.classList.add("active");
-            }
-        });
-    });
-
-    // Update on scroll and after scroll ends (scroll-snap)
-    window.addEventListener("scroll", updateActiveDot);
-    window.addEventListener("resize", updateActiveDot);
-
-    // Optional: observe scroll snapping end using IntersectionObserver
-    const observer = new IntersectionObserver(() => {
-        updateActiveDot();
-    }, { threshold: 0.5 });
-
-    document.querySelectorAll("section, .hero").forEach(sec => observer.observe(sec));
-
-    // initial update
-    updateActiveDot();
-});
-
+// ==========================
+// TOOLTIP
+// ==========================
+const tooltip = d3.select("#globe-tooltip");
 
 // ==========================
 // PAGE 2: EARTH LAYERS PLOT
 // ==========================
-// // Hotspot behavior: show layer info on hover/focus/click
-// document.addEventListener("DOMContentLoaded", () => {
-//     const hotspots = document.querySelectorAll(".hotspot");
-//     const infoBox = document.getElementById("earth-layer-info");
-//     const defaultMsg = "Hover over the middle of each layer to learn more.";
+// Hotspot behavior: show layer info on hover/focus/click
+document.addEventListener("DOMContentLoaded", () => {
+  const hotspots = document.querySelectorAll(".hotspot");
+  const infoBox = document.getElementById("earth-layer-info");
+  const defaultMsg = "Hover over middle of each layer to learn more."
+;
 
-//     // safety: if no hotspots found, exit early
-//     if (!infoBox || hotspots.length === 0) {
-//         // console.warn("No hotspots or info box found.");
-//         return;
-//     }
+  // safety: if no hotspots found, exit early
+  if (!infoBox || hotspots.length === 0) {
+    // console.warn("No hotspots or info box found.");
+    return;
+  }
 
-//     hotspots.forEach(h => {
-//         const name = h.dataset.name || "Layer";
-//         const desc = h.dataset.desc || "";
+  hotspots.forEach(h => {
+    const name = h.dataset.name || "Layer";
+    const desc = h.dataset.desc || "";
 
-//     // Hover & focus show details
-//     h.addEventListener("mouseover", () => {
-//         infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`;
-//     });
-//     h.addEventListener("focus", () => {
-//         infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`;
-//     });
-
-//     // mouseout & blur reset
-//     h.addEventListener("mouseout", () => {
-//         infoBox.textContent = defaultMsg;
-//     });
-//     h.addEventListener("blur", () => {
-//         infoBox.textContent = defaultMsg;
-//     });
-
-//     // click for touch: show and persist briefly so users can read
-//     let clickTimer;
-//     h.addEventListener("click", (e) => {
-//         e.preventDefault();
-//         clearTimeout(clickTimer);
-//         infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`;
-//         // persist for 3s then revert
-//         clickTimer = setTimeout(() => {
-//         infoBox.textContent = defaultMsg;
-//         }, 3000);
-//     });
-//     });
-// });
-
-const layers = [
-    { name: "Crust", color: "#268020ff", description: "Earth’s outer crust: thin and rigid", innerRadius: 130, outerRadius: 150 },
-    { name: "Lithosphere", color: "#c99664ff", description: "Lithosphere: crust + upper mantle, rigid tectonic plates", innerRadius: 100, outerRadius: 130 },
-    { name: "Asthenosphere", color: "#52463bff", description: "Asthenosphere: partially molten, flows slowly", innerRadius: 70, outerRadius: 100 },
-    { name: "Mantle", color: "#333232ff", description: "Mantle: hot, convecting rock that makes up most of Earth’s volume", innerRadius: 40, outerRadius: 70 },
-    { name: "Core", color: "#f18f26ff", description: "At the very, very center is the inner core.It's a solid ball of iron and nickel, even though it's the hottest part (as hot as the surface of the sun!) The reason it stays solid is because all the other layers push down on it with a huge amount of pressure", innerRadius: 0, outerRadius: 40 },
-];
-// Manipulate the VIEW of page2
-const width2D = 450;
-const centerY = 400;
-const height2D = 330;
-
-const svg2D = d3.select("#earth-structure-plot")
-    .append("svg")
-    .attr("viewBox", `0 0 ${width2D} ${height2D}`)
-    .attr("preserveAspectRatio", "xMidYMid meet")
-    .append("g")
-    .attr("transform", `translate(${width2D/2}, ${centerY/2})`);
-
-layers.forEach(layer => {
-  const arcGen = d3.arc()
-    .innerRadius(layer.innerRadius)
-    .outerRadius(layer.outerRadius)
-    .startAngle(-Math.PI/2)
-    .endAngle(Math.PI/2);
-  svg2D.append("path")
-    .attr("d", arcGen())
-    .attr("fill", layer.color)
-    .attr("class", "layer-slice")
-    .on("mouseover", event => {
-        d3.select("#earth-layer-info")
-            .html(`<strong>${layer.name}</strong><br>${layer.description}`);
-        svg2D.selectAll(".layer-slice").attr("opacity", 0.6);
-        d3.select(event.currentTarget).attr("opacity", 1);
-    })
-    .on("mouseout", () => {
-        d3.select("#earth-layer-info").html("Let's show you a bit more about Earth's Layers! Hover over an individual layer for more details.");
-        svg2D.selectAll(".layer-slice").attr("opacity", 1);
+    // Hover & focus show details
+    h.addEventListener("mouseover", () => {
+      infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`;
+    });
+    h.addEventListener("focus", () => {
+      infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`;
     });
 
-    // Center the labels of the earth 
-    const labelRadius = (layer.innerRadius + layer.outerRadius) / 1.93;
-    const labelOffset = 12;
+    // mouseout & blur reset
+    h.addEventListener("mouseout", () => {
+      infoBox.textContent = defaultMsg;
+    });
+    h.addEventListener("blur", () => {
+      infoBox.textContent = defaultMsg;
+    });
 
-    svg2D.append("text")
-        .attr("x", 0)
-        .attr("y", -labelRadius + labelOffset)
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "middle")
-        .attr("class", "earth-layer-label")
-        .text(layer.name);
+    // click for touch: show and persist briefly so users can read
+    let clickTimer;
+    h.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearTimeout(clickTimer);
+      infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`;
+      // persist for 3s then revert
+      clickTimer = setTimeout(() => {
+        infoBox.textContent = defaultMsg;
+      }, 3000);
+    });
+  });
 });
 
 
-
-// ==========================
-// TOOLTIP FOR ALL GLOBES
-// ==========================
-const tooltip = d3.select("#globe-tooltip");
 
 
 // ==========================
