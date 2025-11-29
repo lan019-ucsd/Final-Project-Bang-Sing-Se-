@@ -762,14 +762,14 @@ d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(worldData =>
                 .style("top",  (event.pageY + 10) + "px");
         })
         .on("mouseout", (event, d) => {
-            if (d !== selectedCountry) d3.select(event.currentTarget).attr("fill", "#000");
+            if (d !== selectedCountry) d3.select(event.currentTarget).attr("fill", "#222222");
             tooltip.style("display","none");
         })
         .on("click", (event, d) => {
             if (selectedCountry) {
-                countriesGroup2.selectAll(".country")
-                .filter(c => c.properties.name === selectedCountry.properties.name)
-                .attr("fill", "#222222");
+                countriesGroup2.selectAll(".country2")
+                    .filter(c => c.properties.name === selectedCountry.properties.name)
+                    .attr("fill", "#222222");
             }
             d3.select(event.currentTarget).attr("fill", "#ffb347");
             selectedCountry = d;
