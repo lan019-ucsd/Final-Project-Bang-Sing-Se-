@@ -733,6 +733,8 @@ cityBtn.addEventListener("click", () => {
     return;
   }
 
+  rotateGlobeToCity(+city.lat, +city.lng);
+
   // Display placeholder seismic info
   const distanceKm = Math.round(Math.random() * 500);
   const avgMagnitude = (Math.random() * 4 + 2).toFixed(1);
@@ -769,4 +771,28 @@ cityBtn.addEventListener("click", () => {
       .attr("stroke-width", 1);
   }
 });
+
+function rotateGlobeToCity(lat, lon) {
+    const target = [-lon, -lat]; // D3 orthographic rotation is [lambda, phi, gamma]
+    const currentRotation = projection2.rotate();
+    const r0 = currentRotation; // starting rotation
+    const r1 = target;          // target rotation
+    const duration = 1000;      // ms
+
+    d3.transition()
+        .duration(duration)
+        .tween("rotate", () => {
+            const interp = d3.interpolate(r0, r1);
+            return t => {
+                projection2.rotate(interp(t));
+                svg2.selectAll(".country2").attr("d", path2);
+                svg2.select(".globe-sphere2").attr("d", path2);
+
+                // update city dot position if one exists
+                cityMarkerGroup.selectAll("circle")
+                    .attr("cx", () => projection2([+selectedCity.lng, +selectedCity.lat])[0])
+                    .attr("cy", () => projection2([+selectedCity.lng, +selectedCity.lat])[1]);
+            };
+        });
+}
 
