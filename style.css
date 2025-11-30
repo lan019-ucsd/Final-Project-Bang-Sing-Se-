@@ -10,7 +10,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    font-family: "Times New Roman", Times, serif;
     color: #222;
     overflow-x: hidden;
     scroll-behavior: smooth;
@@ -61,7 +61,7 @@ section, .hero {
 }
 
 /* ========================== */
-/* Page 1 */
+/* PAGE 1
 /* ========================== */
 .hero {
   position: relative;
@@ -131,7 +131,7 @@ section, .hero {
 }
 
 /* ========================== */
-/* Page 2 */
+/* PAGE 2
 /* ========================== */
 #earth-structure-section {
     background: linear-gradient(to bottom, #272626, #1e1e1e);
@@ -196,7 +196,7 @@ section, .hero {
 }
 
 /* ========================== */
-/* Page 3 */
+/* PAGE 3
 /* ========================== */
 
 .globe-instruction {
@@ -302,6 +302,10 @@ section, .hero {
   color: rgba(255,255,255,0.9);
 }
 
+.feature-instruction {
+    font-size: 0.75rem; 
+}
+
 .feature-boxes {
   display: grid;
   gap: 12px;
@@ -343,8 +347,9 @@ section, .hero {
 }
 
 
+
 /* ========================== */
-/* Page 4 */
+/* PAGE 4
 /* ========================== */
 #country-detail-section {
   background: linear-gradient(to bottom, #131212, #0f0d0d);
@@ -394,7 +399,6 @@ section, .hero {
   display: block;
 }
 
-/* tooltip */
 #globe-tooltip {
   position: absolute;
   pointer-events: none;
@@ -408,7 +412,7 @@ section, .hero {
 }
 
 /* ========================== */
-/* HEATMAP / PAGE 5 */
+/* PAGE 5
 /* ========================== */
 
 #heatmap-section {
@@ -418,13 +422,13 @@ section, .hero {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background: #000; /* black background */
+  background: linear-gradient(to bottom, #131212, #030405);
+
   color: #fff;      /* white text */
   padding: 1rem;
   box-sizing: border-box;
 }
 
-/* Flex row: iframe on left, feature boxes on right */
 .heatmap-row {
   width: 100%;
   height: 100%;
@@ -434,7 +438,6 @@ section, .hero {
   align-items: flex-start;
 }
 
-/* LEFT: Heatmap container */
 .heatmap-left {
   flex: 3;
   display: flex;
@@ -451,7 +454,6 @@ section, .hero {
   border-radius: 1rem;
 }
 
-/* RIGHT: Feature box column */
 .heatmap-features {
   flex: 1;
   display: flex;
@@ -459,7 +461,6 @@ section, .hero {
   gap: 1rem;
 }
 
-/* Feature boxes */
 .feature-box1 {
   background: #2d342d; /* blue background */
   color: #fff;          /* white text */
@@ -486,6 +487,126 @@ section, .hero {
   padding-left: 0.5rem;
   color: #c9c9c9;
 }
+
+/* ========================== */
+/* PAGE 6
+/* ========================== */
+/* Page 6: News and Personal Stories */
+#news-section {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #000; /* black background */
+  color: #fff;            /* white text */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+#news-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+#news-section p {
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+/* Flip card row */
+.flip-card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Flip card container */
+.flip-card {
+  flex: 1 1 220px; /* grow, shrink, min-width */
+  height: 500px;
+  perspective: 1000px;
+  min-width: 200px;
+}
+
+/* Flip card inner */
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+/* Front and back faces */
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+
+/* Front: individual images for each card */
+.flip-card-front {
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Specific front images */
+.flip-card-front.card1 { background-image: url('images/flipcard1.jpg'); }
+.flip-card-front.card2 { background-image: url('images/flipcard2.jpg'); }
+.flip-card-front.card3 { background-image: url('images/flipcard3.webp'); }
+.flip-card-front.card4 { background-image: url('images/flipcard4.webp'); }
+
+/* Back */
+.flip-card-back {
+  background-color: rgba(150, 82, 82, 0.8);
+  color: #fff;
+  transform: rotateY(180deg);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Flip effect on hover */
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 900px) {
+  .flip-card-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .flip-card {
+    width: 90%;
+    min-width: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Optional: add a semi-transparent overlay on front text for readability */
+.flip-card-front h3, .flip-card-front p {
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+  z-index: 2;
+}
+
+
 
 /* ========================== */
 /* Small Screens
@@ -546,7 +667,6 @@ section, .hero {
     height: 60vh;
   }
 }
-
 
 /* small UX polish */
 a, button { cursor: pointer; }
