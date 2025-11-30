@@ -1,24 +1,22 @@
 // ==========================
 // DATA LOADING
 // ==========================
-// Load earthquake data from CSV file (Func Definer)
+
 async function loadCSV(path, sampleSize = null) {
-    // Download CSV data through Fetch API (HTTP Request)
+  
     const response = await fetch(path);
     // Extract the content
     const csvText = await response.text();
 
-    // Parse CSV using PapaParse library
-    // Keep header, convert to number automatically, skip empty
+
     const result = Papa.parse(csvText, {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
     });
-    // Extract the content
+
     let data = result.data;
 
-    // Choose a random subset by input the sample size and shuffle it
     if (sampleSize !== null && sampleSize < data.length) {
         data = data
             .sort(() => Math.random() - 0.5)
@@ -30,8 +28,6 @@ async function loadCSV(path, sampleSize = null) {
 
 // Load country data from JSON file (Func Definer)
 async function loadJSON(path) {
-    // Download JSON data through D3 JSON built in loader (HTTP Request)
-    // load country geographic locations & name data
     const data = await d3.json(path)
     return data
 }
@@ -69,40 +65,37 @@ console.log(sphereData)
 
 
 // ==========================
+// GLOBAL TOOLTIP
+// ==========================
+const tooltip = d3.select("#globe-tooltip");
+
+// ==========================
 // DOT FOR PAGES
 // ==========================
-// Locate the dot <nav> elements & container <section>/<header> elements
 const dots = document.querySelectorAll(".nav-dot");
 const sections = document.querySelectorAll("section, header.hero");
 
-// Activate Dot on Click
-// Identify the selected dot and using closest distance method
 const updateActiveDot = () => {
     let closestDot = null;
     let closestDistance = Infinity;
 
     // Iterate each dot <span> element
     dots.forEach(dot => {
-        // Get target ID from the attribute
         const targetId = dot.getAttribute("data-target");
-        // Find the element matched with ID name
         const targetEl = document.getElementById(targetId);
-        // If not defined, return 0
+
         if (!targetEl) {
             console.error(`Element with ID: ${targetId} does not exist`);
             return;
         }
 
-        // Get the size/position for the element & find the abs distance
         const rect = targetEl.getBoundingClientRect();
         const distance = Math.abs(rect.top);
 
-        // Update closestDot & closestDistance
         closestDistance = Math.min(distance, closestDistance);
         closestDot = distance < closestDistance ? dot : closestDot;
     });
 
-    // If cloestDot defined, do smth
     if (closestDot) {
         // Reset all dot & Activate the selected dot
         dots.forEach(d => d.classList.remove("active"));
@@ -110,18 +103,11 @@ const updateActiveDot = () => {
     }
 };
 
-// Activate Dot on Viewing correponding page
-// Identify page view using Web API IntersectionObserver (param1: input container, param2: map of threshold)
 const observer = new IntersectionObserver(
     (entries) => {
-        // For each element of the input container/iterable
         entries.forEach(entry => {
-            // Only activate under this condition
             if (entry.isIntersecting) {
-                // Identify the id for current page
                 const id = entry.target.id;
-
-                // Highlight the dot with the matching page
                 dots.forEach(dot => {
                     dot.classList.toggle("active", dot.dataset.target === id);
                 });
@@ -130,12 +116,10 @@ const observer = new IntersectionObserver(
 
     }, 
     { 
-        // Page must occupy 50% of the viewport to be considered as current page
         threshold: 0.5  
     }
 );
 
-// Scroll to page on active dot click
 dots.forEach(dot => {
     const targetId = dot.getAttribute("data-target");
     const targetEl = document.getElementById(targetId);
@@ -150,20 +134,10 @@ dots.forEach(dot => {
     });
 });
 
-// Update active dot on page load, on scroll & after scroll ends (scroll-snap)
 updateActiveDot();
 window.addEventListener("scroll", updateActiveDot);
 window.addEventListener("resize", updateActiveDot);
-// Update active dot on view corresponding page
 sections.forEach(section => observer.observe(section));
-
-
-// *** This is Laura's code, I don't wanna delete it yet ***
-// const observer = new IntersectionObserver(() => {
-//     updateActiveDot();
-// }, { threshold: 0.5 });
-// document.querySelectorAll("section, .hero").forEach(sec => observer.observe(sec));
-
 
 // ==========================
 // PAGE 2: EARTH LAYERS PLOT
@@ -177,10 +151,8 @@ function initHotspots() {
   if (!infoBox) { console.warn("No #earth-layer-info element found."); return; }
   if (!hotspots.length) { console.warn("No .hotspot elements found. Check your HTML."); return; }
 
-  // visual debug flag
   const debugShowBoxes = false;
 
-  // Ensure each hotspot is keyboard focusable and positioned
   hotspots.forEach((h, i) => {
     h.tabIndex = 0; // make focusable
     h.style.position = h.style.position || "absolute";
@@ -201,20 +173,15 @@ function initHotspots() {
     const desc = h.dataset.desc || "No description supplied.";
 
     const show = () => {
-      // set HTML (allow simple markup)
       infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`;
     };
     const reset = () => { infoBox.textContent = defaultMsg; };
 
-    // pointer interactions
     h.addEventListener("mouseenter", show);
     h.addEventListener("mouseleave", reset);
-
-    // keyboard
     h.addEventListener("focus", show);
     h.addEventListener("blur", reset);
 
-    // clicks/touches on mobile: persist briefly
     let timer = null;
     h.addEventListener("click", (e) => {
       e.preventDefault();
@@ -231,25 +198,20 @@ function initHotspots() {
     }, { passive: false });
   });
 
-  // STYLE: make the info box narrower + taller (applied via JS to guarantee immediate effect)
-  infoBox.style.maxWidth = infoBox.dataset.maxWidth || "360px"; // shorter width
-  infoBox.style.minHeight = infoBox.dataset.minHeight || "120px"; // taller height
+  infoBox.style.maxWidth = infoBox.dataset.maxWidth || "360px"; 
+  infoBox.style.minHeight = infoBox.dataset.minHeight || "120px"; 
   infoBox.style.boxSizing = "border-box";
   infoBox.style.padding = infoBox.style.padding || "14px";
 
-  // ---------- FOCUS MANAGEMENT ----------
-  // When the earth section is visible, we want only hotspots to be tabbable.
   const focusableSelector = 'a, button, input, select, textarea, [tabindex]';
   const originalTabindex = new Map();
 
   function disableOtherFocus() {
-    // store and set tabIndex = -1 for everything not a hotspot
     document.querySelectorAll(focusableSelector).forEach(el => {
       if (el.classList && el.classList.contains('hotspot')) return;
-      // don't change elements inside the earth section that are hotspots
+      
       if (earthSection.contains(el) && el.classList && el.classList.contains('hotspot')) return;
 
-      // save original if not yet saved
       if (!originalTabindex.has(el)) {
         originalTabindex.set(el, el.hasAttribute('tabindex') ? el.getAttribute('tabindex') : null);
       }
@@ -259,7 +221,7 @@ function initHotspots() {
 
   function restoreFocus() {
     originalTabindex.forEach((val, el) => {
-      if (!document.contains(el)) return; // element might be removed
+      if (!document.contains(el)) return; 
       if (val === null) {
         el.removeAttribute('tabindex');
       } else {
@@ -269,15 +231,13 @@ function initHotspots() {
     originalTabindex.clear();
   }
 
-  // IntersectionObserver to detect when page/section is in view
   let earthActive = false;
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && entry.intersectionRatio > 0.55) {
         earthActive = true;
         disableOtherFocus();
-        // ensure first hotspot gets focus if user pressed Tab into section
-        // (do not force-focus; only if nothing focused)
+
         if (!document.activeElement || document.activeElement === document.body) {
           hotspots[0].focus();
         }
@@ -291,7 +251,6 @@ function initHotspots() {
   }, { threshold: [0.55] });
   io.observe(earthSection);
 
-  // Trap Tab to only cycle through hotspots while section active
   document.addEventListener("keydown", (e) => {
     if (!earthActive) return;
     if (e.key !== "Tab") return;
@@ -308,38 +267,24 @@ function initHotspots() {
       }
       // otherwise allow normal backwards behavior within hotspots
     } else {
-      // TAB forward
       if (currentIndex === visibleHotspots.length - 1 || currentIndex === -1) {
         e.preventDefault();
         visibleHotspots[0].focus();
       }
-      // otherwise default tab moves to next hotspot
     }
   });
-
-  // initial state message
   infoBox.textContent = defaultMsg;
 }
-
-// Run immediately if DOM ready, otherwise wait
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initHotspots);
 } else {
   initHotspots();
 }
 
-
-// ==========================
-// GLOBAL TOOLTIP
-// ==========================
-const tooltip = d3.select("#globe-tooltip");
-
-
 // ==========================
 // PAGE 3: GLOBE 1 & GLOBE Right
 // ==========================
-// GLOBAL VARIABLE INITIALIZATION -------------------------------------------->
-// Create D3 selection, & locate the SVG container, 
+
 const svg1 = d3.select("#globe-svg");
 const svg1R = d3.select("#globe-svg-r");
 
@@ -420,34 +365,21 @@ const drag_behavior = d3.drag()
         lastY1 = event.y;
     })
 
-// Create Base Sphere (Func Caller)
 plotBaseSphere(svg1, sphereData, 'globe-sphere1')
-// Handle drag behavior (Func Caller)
 drag_behavior(svg1)
-// Create Country Sphere (Func Caller)
 plotCountriesRegions(svg1, countryData, 'country1')
-// Create Earthquake Spots (Func Caller)
 plotEarthquakesPoints(svg1, earthquakeData)
-// Create Gradient Color Legend
 createGradientLegend(earthquakeData)
-// Resize it when page first loaded (Func Caller)
-// Try remove it then it won't show up for page first load until you do something to the window to trigger it, i.e. inspect
 resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1');
-// Resize for Web Responsive Design (CSS Flex Display Simply Won't Help) (Event Listener Caller & Callback)
 window.addEventListener("resize", () => resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1'));
 
-// Same above for right globe
 plotBaseSphere(svg1R, sphereData, 'globe-sphere1R')
 drag_behavior(svg1R)
 plotCountriesRegions(svg1R, countryData, 'country1R')
-// Create Seismic Stations (Func Caller)
 plotStationsPoints(svg1R, stationData)
 resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R');
 window.addEventListener("resize", () => resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R'));
-// ----------------------------------------------------------------------------
 
-// FUNCTION DEFINITION ------------------------------------------------------->
-// Function to plot blank sphere globe (Func Definer)
 function plotBaseSphere(selection, data, idName) {
     selection.append("path")
         // Input Sphere data
@@ -462,15 +394,10 @@ function plotBaseSphere(selection, data, idName) {
 
 // Function to plot countries sphere & Handle CLICK COUNTRY NAME INTERACTIONS (Func Definer)
 function plotCountriesRegions(selection, data, className) {
-    // Extract relevant country data from the object
     const countryGeoNameData = topojson.feature(data, data.objects.countries).features;
-
-    // Create SVG group <g> for groups of countries <path>
     const countriesGroup1 = selection.append("g")
-        // SVG Name Attribute
         .attr("class", "countries");
 
-    // Create D3 selection & locate the country group container
     countriesGroup1.selectAll(`.${className}`)
         // Input Country Geometry & Name data
         .data(countryGeoNameData)
@@ -483,22 +410,20 @@ function plotCountriesRegions(selection, data, className) {
         .attr("stroke", "#fff")
         .attr("stroke-width", 0.5)
 
-        // Event when user hover on the country polygon
+       
         .on("mouseover", function(event, d) {
-            // Create D3 selection & locate selected country <path>
+            
             d3.select(this)
-                // SVG Styling
-                // Highlight selected country region
                 .attr("fill", "#2156e9ff");
-            // Display tooltip info for selected country
+            
             tooltip.text(d.properties.name)
                 .style("display","block")
                 .style("left", (event.pageX + 10) + "px")
                 .style("top",  (event.pageY + 10) + "px");
         })
-        // Event when user no longer hover on the country polygon
+        
         .on("mouseout", function() {
-            // Create D3 selection & locate selected country <path>
+            
             d3.select(this)
                 // SVG Styling
                 // Reset the selected country region
@@ -526,14 +451,10 @@ function plotEarthquakesPoints(selection, data) {
 
     // Create D3 selection & locate the earthquake group container
     earthquakesGroup.selectAll("circle")
-        // Input Earthquake data
         .data(data)
         .enter()
-        // Create individual earthquake <circle>
         .append("circle")
-        // Define position using projection: [long, lat] --> [x, y]
         .attr("cx", d => projection1([d.longitude, d.latitude])[0])
-        // SVG Styling
         .attr("cy", d => projection1([d.longitude, d.latitude])[1])
         .attr("r", d => Math.sqrt(Math.abs(d.mag)) * 2)
         .attr("fill", d => GradColor(d.mag))
@@ -541,37 +462,27 @@ function plotEarthquakesPoints(selection, data) {
         .attr("stroke-width", 0.3)
         .attr("opacity", d => isPointVisible(d.longitude, d.latitude, rotate1) ? 0.8 : 0)
 
-        // Event when hover on the earthquake point
         .on("mouseover", function(event, d) {
-            // Create D3 selection & locate the selected point
-            // Enlarge and darken the points with animated transition
             d3.select(this)
-                // SVG Styling
                 .transition()
                 .duration(150)
                 .attr("fill", "#4d1515ff")
                 .attr("r", Math.sqrt(d.mag) * 4);  
 
-            // Display Tooltip details only for visible points
             if (isPointVisible(d.longitude, d.latitude, rotate1)) {
-                // Initialize location & distance data
                 let location = d.place;
                 let distance = "";
 
-                // Preprocess data
                 if (d.place.includes(",")) {
                     const parts = d.place.split(",");
                     distance = parts[0].trim();
                     location = parts[1].trim();
                 }
-
-                // Show data
                 tooltip.html(`
                     <strong>${location}</strong><br>
                     ${distance ? `* Distance: ${distance}<br>` : ""}
                     * Mag: ${d.mag != null ? d.mag : "Unknown"}
                 `)
-                // Tooltip Styling
                 .style("display", "block")
                 .style("left", (event.pageX + 10) + "px")
                 .style("top",  (event.pageY + 10)  + "px");
@@ -581,15 +492,10 @@ function plotEarthquakesPoints(selection, data) {
             }
 
         })
-        // Event when no longer hover on the earthquake point
         .on("mouseout", function(_, d) {
-            // Reset Tooltip
             tooltip.style("display","none");
             
-            // Create D3 selection & locate the selected point
-            // shrink back to original radius with animated transition
             d3.select(this)
-                // SVG Styling
                 .transition()
                 .duration(150)
                 .attr("fill", d => GradColor(d.mag))
@@ -597,52 +503,36 @@ function plotEarthquakesPoints(selection, data) {
         });
 }
 
-// Function to plot seismic station points & Handle TOOLTIP HOVER INTERACTIONS (Func Definer)
 function plotStationsPoints(selection, data) {
-    // symbol generator for triangle
     const tri = d3.symbol().type(d3.symbolTriangle).size(90);
 
-    // Create SVG group <g> for groups of seismic stations <path>
     const stationsGroup = selection.append("g")
-        // SVG Name Attribute
         .attr("class", "stations");
 
-    // Create D3 selection & locate the selected station
     stationsGroup.selectAll(".stations > path")
-        // Input Station data
         .data(data)
         .enter()
-        // Create individual seismic stations <path>
         .append("path")
-        // SVG Name Attribute
         .attr("class", "station")
-        // SVG Transformation
         .attr("transform", d => {
             const p = projection1R([d.longitude, d.latitude]);
             return `translate(${p[0]},${p[1]})`;
         })
-        // SVG Styling
         .attr("d", tri)
         .attr("fill", "#2aa3ff")
         .attr("stroke", "#fff")
         .attr("stroke-width", 0.8)
         .attr("opacity", d => isPointVisible(d.longitude, d.latitude, rotate1) ? 0.8 : 0)
 
-        // Event when hover on the selected station
         .on("mouseover", function(event, d) {
-            // Create D3 selection & locate the selected station
             d3.select(this)
-                // SVG Transformation
-                // Enlarge slightly for emphasis
                 .transition()
                 .duration(140)
                 .attr("transform", () => {
                     const p = projection1R([d.longitude, d.latitude]);
-                    // Slight scale up; we re-create the symbol scaled via transform
                     return `translate(${p[0]},${p[1]}) scale(1.2)`;
                 });
 
-            // Only show if visible on the front hemisphere
             if (isPointVisible(d.longitude, d.latitude, rotate1)) {
                tooltip.html(`
                         <strong>${d["station code"]}</strong><br>
@@ -659,68 +549,51 @@ function plotStationsPoints(selection, data) {
                 tooltip.style("display", "none");
             }
         })
-        // Event when no longer hover on the selected station
         .on("mouseout", function(event, d) {
-            // Create D3 selection & locate the selected station
             d3.select(this)
-                // SVG Transformation
                 .transition()
                 .duration(120)
                 .attr("transform", () => {
                     const p = projection1R([d.longitude, d.latitude]);
                     return `translate(${p[0]},${p[1]}) scale(1)`;
                 });
-
-            // Reset tooltip
             tooltip.style("display", "none");
         });
 }
 
 // Function to update earthquakes on rotation or resize (Func Definer)
 function updateEarthquakes() {
-    // Ensure <circle> are both shown/hidden and update to rotated positions
-    // Create D3 selection & locate the <circle>
     svg1.selectAll(".earthquakes circle")
         // Update X,Y positions with projection
         .attr("cx", d => projection1([d.longitude, d.latitude])[0])
         .attr("cy", d => projection1([d.longitude, d.latitude])[1])
-        // SVG Styling
         .attr("opacity", d =>
             isPointVisible(d.longitude, d.latitude, rotate1) ? 0.8 : 0
         );
 }
 
-// Function to update station positions & visibility after rotation/resize
 function updateStations() {
-    // Create D3 selection & locate the stations or station group
     svg1R.selectAll(".stations .station")
-        // SVG Transformation
         .attr("transform", d => {
             const p = projection1R([d.longitude, d.latitude]) || [-9999,-9999];
             return `translate(${p[0]},${p[1]}) scale(1)`;
         })
-        // SVG Styling
         .attr("opacity", d => isPointVisible(d.longitude, d.latitude, rotate1) ? 0.95 : 0);
 }
 
-// Function to determine if an earthquake point should be visible or not (Function Definer)
 function isPointVisible(lon, lat, rotate) {
-    // Use math to update if <circle> should be shown or hidden
     const λ = lon * Math.PI/180;
     const φ = lat * Math.PI/180;
 
-    // invert rotation
     const λ0 = -rotate[0] * Math.PI/180;
     const φ0 = -rotate[1] * Math.PI/180;
 
     const cosc = Math.sin(φ0)*Math.sin(φ) +
                  Math.cos(φ0)*Math.cos(φ)*Math.cos(λ - λ0);
 
-    // visible hemisphere
     return cosc > 0;
 }
 
-// Create a simple horizontal gradient legend for earthquake magnitude
 function createGradientLegend(data) {
   if (!data || data.length === 0) return;
 
