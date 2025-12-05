@@ -68,7 +68,6 @@ console.log(sphereData)
 // GLOBAL TOOLTIP
 // ==========================
 const tooltip = d3.select("#globe-tooltip");
-
 // ==========================
 // DOT FOR PAGES
 // ==========================
@@ -418,19 +417,18 @@ const drag_behavior = d3.drag()
     })
 
 plotBaseSphere(svg1, sphereData, 'globe-sphere1')
-drag_behavior(svg1)
+svg1.call(drag_behavior)          // <-- fix here
 plotCountriesRegions(svg1, countryData, 'country1')
 plotEarthquakesPoints(svg1, earthquakeData)
 createGradientLegend(earthquakeData)
 resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1');
-window.addEventListener("resize", () => resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1'));
 
 plotBaseSphere(svg1R, sphereData, 'globe-sphere1R')
-drag_behavior(svg1R)
+svg1R.call(drag_behavior)         // <-- fix here
 plotCountriesRegions(svg1R, countryData, 'country1R')
 plotStationsPoints(svg1R, stationData)
 resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R');
-window.addEventListener("resize", () => resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R'));
+
 
 function plotBaseSphere(selection, data, idName) {
     selection.append("path")
@@ -504,7 +502,7 @@ function plotEarthquakesPoints(selection, data) {
         .attr("fill", d => GradColor(d.mag))
         .attr("stroke", "#fff")
         .attr("stroke-width", 0.3)
-        .attr("opacity", d => isPointVisible(d.longitude, d.latitude, projection1.rotate()) ? 0.8 : 0)
+        .attr("opacity", d => isPointVisible(d.longitude, d.latitude, projection1R.rotate()) ? 0.95 : 0)
 
         .on("mouseover", function(event, d) {
     const originalColor = GradColor(d.mag);
@@ -516,7 +514,7 @@ function plotEarthquakesPoints(selection, data) {
         .attr("fill", darkColor)          // darkened version
         .attr("r", Math.sqrt(d.mag) * 4);
 
-    if (isPointVisible(d.longitude, d.latitude, projection1.rotate())) {
+    if (isPointVisible(d.longitude, d.latitude, projection1R.rotate())) {
         let location = d.place;
         let distance = "";
 
@@ -677,16 +675,10 @@ function resizeGlobe1(selection, pathFunc, projectionFunc, idNameSphere, classNa
     updateStations();
 }
 
+/* Country */
 const svg2 = d3.select("#globe-svg-2");
 const path2 = d3.geoPath();
 const projection2 = d3.geoOrthographic().clipAngle(90);
-
-svg2.append("path")
-  .datum({ type: "Sphere" })
-  .attr("class", "globe-sphere2")
-  .attr("fill", "#000")
-  .attr("stroke", "#fff")
-  .attr("stroke-width", 0.5);
 
 // Countries group
 const countriesGroup2 = svg2.append("g").attr("class", "countries");
@@ -719,22 +711,6 @@ d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(worldData =>
 }).catch(err => {
   console.error("Failed to load world data:", err);
 });
-
-function resizeGlobe2() {
-  const cw = svg2.node().parentNode.getBoundingClientRect().width || 300;
-  svg2.attr("width", cw).attr("height", cw);
-  projection2.translate([cw / 2, cw / 2]).scale(cw / 2 * 0.9);
-  path2.projection(projection2);
-
-  svg2.select(".globe-sphere2").attr("d", path2);
-  svg2.selectAll(".country2").attr("d", path2);
-
-  svg2.selectAll(".country2")
-    .attr("fill", d => (selectedCountry && sameFeature(d, selectedCountry)) ? HIGHLIGHT_FILL : DEFAULT_FILL);
-
-  plotStationsOnGlobe(selectedCountry);
-}
-window.addEventListener("resize", resizeGlobe2);
 
 function sameFeature(a, b) {
   if (!a || !b) return false;
@@ -922,6 +898,7 @@ function plotStationsOnGlobe(feature = null) {
     });
 }
 
+/* Zoomed-in Countries */
 function handleCountrySearch(query) {
   if (!countriesData || !countriesData.length) {
     d3.select("#country-result").text("World geometry not yet loaded. Try again in a moment.");
@@ -1101,8 +1078,6 @@ function updateGlobePoints() {
   // set initial state (mirrors existing default)
   applyActiveBox(window.activeLayer || "stations");
 })();
-
-
 
 // ==========================
 // PAGE 6
