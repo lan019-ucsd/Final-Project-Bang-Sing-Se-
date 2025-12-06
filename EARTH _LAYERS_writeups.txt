@@ -40,8 +40,8 @@ LIVE ACTION RECENT EVENTS (maybe put this as our page 2? or after the layers exp
 
 5.7Mw (moment Magnitude) in Bangladesh Nov-23-2025
 
-6.9Mw in Phillipines on Sept-30-2025
-The Phillipines is a odd case as they have experienced 2 typhoons and an earthquake over the span of 8 days.
+6.9Mw in Philippines on Sept-30-2025
+The Philippines is a odd case as they have experienced 2 typhoons and an earthquake over the span of 8 days.
 
 We'll explain some of the mechanics of Earthquakes. Assuming a good amount of our audience is from California, we do reside along the San Andres Fault. Further north is the Cascadia Subduction Zone.
 
@@ -54,15 +54,47 @@ Quakes Today: https://x.com/QuakesToday
 Quakes over the last 24 hours: https://earthquaketrack.com/
 
 
+(INSIGHTS)
+Places of Interest:
+---
+United States: this year, the west coast of the US is relatively empty. 
+Hawaii and California seem to be lacking in seismic activity. 
+Are they relatively safe to be in based on this information?
+---
+Philippines & Japan: Can you find both of these East Asia countries? 
+Both are covered in earthquakes, and support our positive stance:
+If tectonic activity exists, then earthquakes will be recorded in that region.
+---
+Libya, Morocco, Algeria, Sudan, Egypt, & Tunisia:
+This collective of Norther Africa lacks stations.
+There exist 1 earthquake in Morocco across all of these countries.
+Contrapositively, this fails-- We have no seismic coverage in that country, but we recorded tectonic activity.
+---
+Other countries of interest for you to explore:
+South Africa, Australia, Indonesia, Russia, & Chile
+---
+Can you think of why particular countries like Earthquakes?
+
 
 TAKEAWAYS:
+---
+We've shown you:
+The Mechanics of Earthquakes
+What our Earth's layers consist of 
+What events cause Earthquakes
+Ways to be on alert
+Impacted countries
+Countries that shouldn't have acitivity
+---
+We hope you explored our site to it's fullest, and thank you for visiting!
+---
 
-We've shown you the mechanics of Earthquakes
-  what our Earth's layers consist of 
-  what events cause earthquakes
-  heavily impacted zones
 
-Examples of the impact these natural disasters cause over time.
+REFERENCES:
+---
+U.S. Geological Survey. (n.d.). ComCat: Comprehensive earthquake catalog. https://earthquake.usgs.gov/data/comcat/index.php
 
+Wando, B. (2024). Earthquakes around the world (1900–2025) [Dataset]. Kaggle.
+https://www.kaggle.com/datasets/bwandowando/earthquakes-around-the-world-from-1900-2025
+---
 
-Where your living situation is in relation to the earthquakes we experience.

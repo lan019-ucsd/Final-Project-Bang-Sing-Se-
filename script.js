@@ -138,26 +138,31 @@ window.addEventListener("scroll", updateActiveDot);
 window.addEventListener("resize", updateActiveDot);
 sections.forEach(section => observer.observe(section));
 
-// ==========================
-// PAGE 1
-// ==========================
-// Select the hero and its text elements
-const hero = document.querySelector(".hero");
-const heroElements = hero.querySelectorAll("h1, p");
+// ================================
+// PAGE 1 + PAGE 1.5 (all heroes)
+// ================================
+
+// Select ALL hero sections
+const heroes = document.querySelectorAll('.hero');
 
 // Intersection Observer to trigger animation on scroll
 const heroObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
+      // Get the h1 and p inside *this* hero section
+      const heroElements = entry.target.querySelectorAll('h1, p');
+
       heroElements.forEach(el => {
-        el.classList.remove("animate");
-        void el.offsetWidth; // trigger reflow
-        el.classList.add("animate");
+        el.classList.remove('animate'); // reset
+        void el.offsetWidth;            // trigger reflow
+        el.classList.add('animate');    // fade in
       });
     }
   });
 }, { threshold: 0.25 }); // lower threshold to 25%
-heroObserver.observe(hero);
+
+// Observe each hero
+heroes.forEach(hero => heroObserver.observe(hero));
 
 // ==========================
 // PAGE 2
