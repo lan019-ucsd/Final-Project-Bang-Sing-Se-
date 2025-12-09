@@ -212,7 +212,7 @@ section, .hero {
   font-size:clamp(1rem,1.8vw,1.15rem); 
   line-height:1.8; 
   color:rgba(255,255,255,0.94);
-  background: #252525;
+  background: #2e2e2e;
   padding:1rem 1.25rem; 
   border-radius:10px; 
   box-shadow:0 8px 30px rgba(0,0,0,0.6);
@@ -227,12 +227,11 @@ section, .hero {
   color:#c74f47; text-shadow:0 4px 18px rgba(0,0,0,0.6); }
 
 .author { 
-  margin:1rem 0 0; 
+  margin:0.5rem 0 0; 
   font-weight:600; 
   opacity:0.9; 
   color:#ac3930; 
   text-align:right; 
-  max-width:720px; 
 }
 
 .question { 
