@@ -74,36 +74,31 @@ const tooltip = d3.select("#globe-tooltip");
 // DOT FOR PAGES
 // ==========================
 const dots = document.querySelectorAll(".nav-dot");
-const sections = document.querySelectorAll("section, header.hero");
+const sections = document.querySelectorAll("section, header.hero, header.anecdote-section");
 
 const updateActiveDot = () => {
     let closestDot = null;
     let closestDistance = Infinity;
 
-    // Iterate each dot <span> element
     dots.forEach(dot => {
-        const targetId = dot.getAttribute("data-target");
+        const targetId = dot.dataset.target;
         const targetEl = document.getElementById(targetId);
-
-        if (!targetEl) {
-            console.error(`Element with ID: ${targetId} does not exist`);
-            return;
-        }
+        if (!targetEl) return;
 
         const rect = targetEl.getBoundingClientRect();
         const distance = Math.abs(rect.top);
 
-        closestDistance = Math.min(distance, closestDistance);
-        closestDot = distance < closestDistance ? dot : closestDot;
+        if (distance < closestDistance) {
+            closestDistance = distance;
+            closestDot = dot;
+        }
     });
 
     if (closestDot) {
-        // Reset all dot & Activate the selected dot
         dots.forEach(d => d.classList.remove("active"));
         closestDot.classList.add("active");
     }
 };
-
 
 
 const observer = new IntersectionObserver(
@@ -767,9 +762,7 @@ function resizeGlobe1(selection, pathFunc, projectionFunc, idNameSphere, classNa
 // ----------------------------------------------------------------------------
 
 /* Country */
-/* =============================
-   Country / Globe / Toggle Logic
-============================= */
+
 
 // Select DOM elements
 /* -------------------------
@@ -780,7 +773,6 @@ const countryMapSvg = d3.select("#country-map");
 
 let countriesData = [];
 let selectedCountry = null;
-let activeLayer = "stations"; // default layer
 
 const DEFAULT_FILL = "#222222";
 const HIGHLIGHT_FILL = "#e1e0e0ff";
@@ -980,52 +972,55 @@ if (btn && inputEl) {
     if (e.key === "Enter") { e.preventDefault(); handleCountrySearch(inputEl.value); }
   });
 }
-
 /* -------------------------
-   Toggle buttons logic
+   Box toggles for dual-globe view (stations / earthquakes)
 ------------------------- */
 const toggleButtons = document.querySelectorAll(".toggle-btn");
-toggleButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    activeLayer = btn.dataset.type;
-    toggleButtons.forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
+const boxStations = document.getElementById("box-stations");
+const boxMagnitudes = document.getElementById("box-magnitudes");
 
-    updateCountryView(); // unified redraw
+// Grab globe containers
+const globeContainers = document.querySelectorAll(".globe-container");
+const topGlobe = globeContainers[0];      // top globe (stations)
+const bottomGlobe = globeContainers[1]; 
+
+let activeLayer = "stations"; // default
+
+function applyActiveBox(mode) {
+  activeLayer = mode;
+
+  // Update toggle UI
+  boxStations.classList.toggle("active", mode === "stations");
+  boxMagnitudes.classList.toggle("active", mode === "earthquakes");
+
+  // Dim/undim globes
+  topGlobe.classList.toggle("globe-dim", mode !== "stations");
+  bottomGlobe.classList.toggle("globe-dim", mode !== "earthquakes");
+
+  // Update your globe data visualizations (assuming functions exist)
+  if (typeof updateGlobePoints === "function") updateGlobePoints();
+  if (mode === "stations" && typeof plotStationsOnGlobe === "function") plotStationsOnGlobe();
+  if (mode === "earthquakes" && typeof updateEarthquakes === "function") updateEarthquakes();
+}
+
+// Event listeners for toggle boxes
+boxStations.addEventListener("click", () => applyActiveBox("stations"));
+boxMagnitudes.addEventListener("click", () => applyActiveBox("earthquakes"));
+
+// Keyboard support
+[boxStations, boxMagnitudes].forEach(box => {
+  box.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      box.click();
+    }
   });
 });
 
-/* -------------------------
-   Box toggles for dual-globe view
-------------------------- */
-(function() {
-  const boxStations = document.getElementById("box-stations");
-  const boxMagnitudes = document.getElementById("box-magnitudes");
-  if (!boxStations || !boxMagnitudes) return;
+// Initialize
+applyActiveBox(activeLayer);
 
-  function applyActiveBox(mode) {
-    activeLayer = mode;
-    boxStations.classList.toggle("active", mode === "stations");
-    boxMagnitudes.classList.toggle("active", mode === "earthquakes");
-    boxStations.setAttribute("aria-pressed", mode === "stations");
-    boxMagnitudes.setAttribute("aria-pressed", mode === "earthquakes");
 
-    // Redraw everything
-    updateCountryView();
-  }
-
-  boxStations.addEventListener("click", () => applyActiveBox("stations"));
-  boxMagnitudes.addEventListener("click", () => applyActiveBox("earthquakes"));
-
-  [boxStations, boxMagnitudes].forEach(box => {
-    box.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); box.click(); }
-    });
-  });
-
-  // Set initial state
-  applyActiveBox(activeLayer);
-})();
 
 // ==========================
 // PAGE 6

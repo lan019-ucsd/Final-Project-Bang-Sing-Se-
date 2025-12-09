@@ -491,6 +491,11 @@ section, header.hero {
 /* make sure globes' parent containers are position:relative so toggle panel positions properly */
 .globe-column {
   margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;     
+  align-items: center;
+  position: relative; /* for toggle boxes absolute positioning */
 }
 
 .globe-title1 {
