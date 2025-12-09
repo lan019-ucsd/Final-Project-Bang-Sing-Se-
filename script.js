@@ -140,7 +140,7 @@ window.addEventListener("resize", updateActiveDot);
 sections.forEach(section => observer.observe(section));
 
 // ================================
-// PAGE 1 + PAGE 1.5 (all heroes)
+// PAGE 1 
 // ================================
 
 // Select ALL hero sections
@@ -167,6 +167,63 @@ heroes.forEach(hero => heroObserver.observe(hero));
 
 // ==========================
 // PAGE 2
+// ==========================
+// Ripple parallax movement
+// Ripple parallax movement
+(function() {
+  const bg = document.querySelector('.anecdote .ripple');
+  if (!bg) return;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth) - 0.5;
+    const y = (e.clientY / window.innerHeight) - 0.5;
+    bg.style.transform = `translate(${clamp(x*18,-20,20)}px, ${clamp(y*18,-20,20)}px) scale(1)`;
+  });
+})();
+
+// Animate anecdote on scroll (replay on each entry)
+(function() {
+  const anecdote = document.getElementById('anecdote-section');
+  if (!anecdote) return;
+
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    anecdote.classList.add('in-view');
+    anecdote.querySelectorAll('.anecdote-inner, .lead, .author, .question, .explain')
+      .forEach(el => { el.style.opacity = 1; el.style.transform = 'none'; });
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const children = anecdote.querySelectorAll('.lead, .author, .question, .explain');
+
+      if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
+        anecdote.classList.add('in-view');
+        // stagger children
+        children.forEach((el,i) => el.style.transitionDelay = `${120 + i*40}ms`);
+      } else {
+        // remove class so animation can replay
+        anecdote.classList.remove('in-view');
+        children.forEach(el => el.style.transitionDelay = `0ms`);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  observer.observe(anecdote);
+})();
+
+
+
+
+
+
+
+// ==========================
+// PAGE 3
 // ==========================
 
 function initHotspots() {
@@ -286,12 +343,6 @@ function initHotspots() {
 
     const currentIndex = visibleHotspots.indexOf(document.activeElement);
     if (e.shiftKey) {
-      // SHIFT+TAB: move backwards
-      if (currentIndex === -1 || currentIndex === 0) {
-        e.preventDefault();
-        visibleHotspots[visibleHotspots.length - 1].focus();
-      }
-      // otherwise allow normal backwards behavior within hotspots
     } else {
       if (currentIndex === visibleHotspots.length - 1 || currentIndex === -1) {
         e.preventDefault();
@@ -307,8 +358,10 @@ if (document.readyState === "loading") {
   initHotspots();
 }
 
+
+
 // =================================
-// PAGE 3
+// PAGE 4
 // =================================
 
 const featureGIFs = {
@@ -340,7 +393,7 @@ featureBoxes.forEach(box => {
 });
 
 // ==========================
-// PAGE 4
+// PAGE 5
 // ==========================
 // VARIABLE INITIALIZATION ----------------------------------------------------
 const svg1 = d3.select("#globe-svg");
@@ -939,7 +992,6 @@ toggleButtons.forEach(btn => {
   // Set initial state
   applyActiveBox(activeLayer);
 })();
-
 
 // ==========================
 // PAGE 6

@@ -87,7 +87,7 @@ section, .hero {
   top:0; left:0;
   width:100%;
   height:100%;
-  background: linear-gradient(to bottom, #acabab, #272626);
+  background: linear-gradient(to bottom, #dad9d9, #363636);
   animation: pulse 8s infinite alternate;
   z-index:0;
 }
@@ -137,76 +137,175 @@ section, .hero {
 /* PAGE 2 (Anecdotes) */
 /* ========================== */
 
-/* Make anecdote visually identical to hero */
 .anecdote {
   position: relative;
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  text-align: center;
-  color: #fff;
-  padding: 3rem 2rem;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 1rem;
-  z-index: 1;
+  color: #f6f7f9;
+  overflow: hidden;
+  padding: 4rem 2rem;
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(to bottom, #363636, #1a1a1a);
+  box-sizing: border-box;
 }
 
-.anecdote1 {
-  position: absolute;
-  top:0; left:0;
-  width:100%;
-  height:100%;
-  background: linear-gradient(to bottom, #272626, #1a1a1a);
-  animation: pulse 8s infinite alternate;
+.ripple {
+  position:absolute; left:10%; top:25%; width:600px; height:600px;
+  border-radius:50%;
+  box-shadow:0 0 0 2px rgba(227,50,51,0.04),0 0 0 10px rgba(227,50,51,0.02),0 0 30px rgba(227,50,51,0.02) inset;
+  transform:translate(-10%, -10%);
+  opacity:0.9; filter:blur(24px);
+  animation:ripple 6s ease-in-out infinite;
 }
 
-/* typography and sizing same as hero */
-.anecdote h1 {
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  max-width: 900px;
-  margin-bottom: 1rem;
-  line-height: 1.05;
-  text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-  z-index: 1;
+/* layout */
+.anecdote-inner {
+  position: relative; z-index:2;
+  max-width:1100px; margin:0 auto;
+  display:grid; grid-template-columns:220px 1fr; gap:2rem; align-items:start; width:100%;
 }
 
-.anecdote p {
-  font-size: clamp(1rem, 1.8vw, 1.2rem);
-  max-width: 800px;
-  line-height: 1.8;
-  opacity: 0.9;
-  margin: 1rem 0;
+.left-col { 
+  padding-top:1.5rem; 
+  position: relative; 
 }
 
-.anecdote .author {
-  align-self: flex-end;   /* pushes it to the right inside the flex container */
-  text-align: right;
-  width: 100%;            /* ensures the text-align works */
-  max-width: 800px;       /* match the width of your other paragraphs */
-  padding-right: 1rem;    /* optional: small right padding */
+.date-block {
+  background: #222222;
+  border:1px solid rgba(255,255,255,0.04);
+  padding:1.1rem 1.2rem; border-radius:12px; width:180px; text-align:left;
+  box-shadow:0 8px 30px rgba(3,4,6,0.55);
 }
 
+.date-block time { 
+  display:block; 
+  font-weight:500; 
+  letter-spacing:-0.02em; 
+  font-size:clamp(1.2rem,2.6vw,1.6rem); 
+  color:#fff; 
+}
+
+.date-block time span { 
+  display:block; 
+  font-weight:500; 
+  opacity:0.75; 
+  font-size:0.85rem;
+   margin-top:0.15rem; 
+}
+
+.timeline-dot { 
+  width:12px; 
+  height:12px; 
+  background:#e34a33; 
+  border-radius:50%; 
+  margin-top:0.9rem; 
+  box-shadow:0 6px 18px rgba(227,74,51,0.22); 
+}
+
+.content { 
+  padding-top:1rem; 
+}
+
+.lead {
+  font-size:clamp(1rem,1.8vw,1.15rem); 
+  line-height:1.8; 
+  color:rgba(255,255,255,0.94);
+  background: #252525;
+  padding:1rem 1.25rem; 
+  border-radius:10px; 
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 420ms;
+}
+
+.dropcap { 
+  float:left; 
+  font-size:clamp(3rem,7vw,4.4rem); 
+  line-height:0.85; margin-right:0.6rem; 
+  font-weight:700; 
+  color:#c74f47; text-shadow:0 4px 18px rgba(0,0,0,0.6); }
+
+.author { 
+  margin:1rem 0 0; 
+  font-weight:600; 
+  opacity:0.9; 
+  color:#ac3930; 
+  text-align:right; 
+  max-width:720px; 
+}
+
+.question { 
+  margin-top:1.6rem; 
+  font-size:clamp(1.1rem,2.4vw,1.35rem); 
+  font-weight:700; 
+  color:#fff; 
+}
+
+.explain { 
+  margin-top:0.6rem; 
+  color:rgba(255,255,255,0.87); 
+  line-height:1.7; 
+}
+
+.sep { 
+  width:64px; 
+  height:4px; 
+  background:linear-gradient(90deg,#8d2d1e,#ffb58a); 
+  border:none; 
+  margin:1rem 0; 
+  border-radius:4px; 
+}
+
+.anecdote .lead, .anecdote .question, .anecdote .explain { 
+  transform:translateY(6px); 
+  opacity:0; 
+  transition:transform 700ms, opacity 700ms; 
+}
+
+.anecdote.in-view .lead,
+.anecdote.in-view .question,
+.anecdote.in-view .explain { 
+  transform:translateY(0); 
+  opacity:1; 
+}
+
+@keyframes ripple { 0% {transform:translate(-10%,-10%) scale(0.98);opacity:.24;filter:blur(30px);} 50% {transform:translate(-12%,-12%) scale(1.03);opacity:.14;filter:blur(40px);} 100% {transform:translate(-10%,-10%) scale(0.98);opacity:.22;filter:blur(30px);} }
+
+.sr-only { 
+  position:absolute !important;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0; 
+}
+
+@media (max-width:860px) {
+  .anecdote-inner { grid-template-columns:1fr; padding:0 1rem; }
+  .left-col { display:flex; justify-content:center; margin-bottom:0.5rem; }
+  .date-block { width:220px; text-align:center; }
+  .author { text-align:right; }
+}
 
 /* ========================== */
 /* PAGE 3 (Earth layers) */
 /* ========================== */
 #earth-structure-section {
-    background: linear-gradient(to bottom, #1a1a1a, #1e1e1e);
-    color: #fff;
-    position: relative;
-    padding: 1rem;
-}
-
-#earth-structure-section {
-  height: 120vh;
+  background: linear-gradient(to bottom, #1a1a1a, #1e1e1e);
+  color: #fff;
+  position: relative;
+  padding: 0.2rem;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
 }
+
 
 #earth-structure-section h1 {
     margin: 0 0 1rem 0;
@@ -225,7 +324,7 @@ section, .hero {
     width: 100%;
     max-height: 60vh;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 4px;
     display: block;
 }
 
@@ -263,7 +362,7 @@ section, .hero {
 #map-section {
   background: linear-gradient(to bottom, #1e1e1e, #131212);
   width: 100%;
-  min-height: 120vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: row;
   align-items: flex-start;

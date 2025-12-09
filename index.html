@@ -29,33 +29,42 @@
 </header>
 
 <!-- Page 2 (Anecdote)-->
-<header id="anecdote-section" class="anecdote">
-  <div class="anecdote1"></div>
-  
-  <h1>May 23rd, 2013</h1>
+<header id="anecdote-section" class="anecdote" role="region" aria-labelledby="anecdote-date">
+  <div class="anecdote-bg" aria-hidden="true">
+    <div class="ripple"></div>
+    <svg class="grain" width="0" height="0" aria-hidden="true">
+      <filter id="noise">
+        <feTurbulence baseFrequency="0.8" numOctaves="1" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+        <feBlend in="SourceGraphic" mode="overlay"/>
+      </filter>
+    </svg>
+  </div>
 
-  <p> 
-    On this day, I vividly remember experiencing my first severe earthquake. 
-    I was seventeen, sitting at my desk immersed in a video game to pass the time. 
-    My chair suddenly slid backwards, my decorations shook, and CDs dropped to the floor. 
-    I initially assumed it was my imagination until the phones of my household immediately issued an 
-    emergency alert warning everyone of a major earthquake. In the minutes that followed, news 
-    reports described the widespread panic as the public scrambled to protect themselves.
-  </p>
+  <div class="anecdote-inner">
+    <div class="left-col">
+      <div class="date-block" id="anecdote-date">
+        <time datetime="2013-05-23">May 23rd, <span>2013</span></time>
+        <div class="timeline-dot" aria-hidden="true"></div>
+      </div>
+    </div>
 
-  <p class="author">– Jason Limfueco</p>
+    <article class="content" aria-labelledby="anecdote-date">
+      <h1 class="sr-only">Personal earthquake recollection</h1>
 
-  <p>
-    With our current scientific knowledge and networks poses the question: 
-    <strong>How do gaps in seismic monitoring affect our understanding of earthquake risk?</strong>
-  </p>
+      <p class="lead"><span class="dropcap">O</span>n this day, I vividly remember experiencing my first severe earthquake. I was seventeen, sitting at my desk immersed in a video game to pass the time. My chair suddenly slid backwards, my decorations shook, and CDs dropped to the floor. I initially assumed it was my imagination until the phones of my household immediately issued an emergency alert warning everyone of a major earthquake. In the minutes that followed, news reports described the widespread panic as the public scrambled to protect themselves.</p>
 
-  <p>
-    In a geoscience context: if tectonic activity exists (A), then earthquakes will be recorded in that region (B). 
-    Therefore, if earthquakes are not recorded in a region (not B), this may indicate a lack of tectonic activity (not A). 
-    We will discuss the mechanics of seismic proportions and findings, illustrating a contrapositive stance.
-  </p>
+      <p class="author">– Jason Limfueco</p>
+
+      <hr class="sep" />
+
+      <h2 class="question">How do gaps in seismic monitoring affect our understanding of earthquake risk?</h2>
+
+      <p class="explain">In a geoscience context: if tectonic activity exists (A), then earthquakes will be recorded in that region (B). Therefore, if earthquakes are not recorded in a region (not B), this may indicate a lack of tectonic activity (not A). We will discuss the mechanics of seismic proportions and findings, illustrating a contrapositive stance.</p>
+    </article>
+  </div>
 </header>
+
 
 
 <!-- Page 3 (Earth layers)-->
