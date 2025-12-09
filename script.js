@@ -1,7 +1,7 @@
-// ==========================
-// DATA LOADING
-// ==========================
-
+// ============================
+// FOR ALL PAGES: DATA LOADING
+// ============================
+// Load CSV data from JSON file (Func Definer)
 async function loadCSV(path, sampleSize = null) {
   
     const response = await fetch(path);
@@ -26,7 +26,7 @@ async function loadCSV(path, sampleSize = null) {
     return data;
 }
 
-// Load country data from JSON file (Func Definer)
+// Load JSON data from JSON file (Func Definer)
 async function loadJSON(path) {
     const data = await d3.json(path)
     return data
@@ -58,17 +58,16 @@ const countryData = await loadJSON("https://unpkg.com/world-atlas@2/countries-11
 console.log("Country Data")
 console.log(countryData)
 
-// Define the Sphere data
+// Define the Sphere data (Object Definer)
 const sphereData = { type: "Sphere" }
 console.log("Sphere GeoJSON Data")
 console.log(sphereData)
 
 
-// ==========================
-// GLOBAL TOOLTIP
-// ==========================
+// ==============================
+// FOR ALL PAGES: GLOBAL TOOLTIP
+// ==============================
 const tooltip = d3.select("#globe-tooltip");
-
 // ==========================
 // DOT FOR PAGES
 // ==========================
@@ -79,68 +78,47 @@ const updateActiveDot = () => {
     let closestDot = null;
     let closestDistance = Infinity;
 
-    // Iterate each dot <span> element
+    // Iterate each dot <span> element & find the closest dot to be activated
     dots.forEach(dot => {
+        // Get target element based on dot
         const targetId = dot.getAttribute("data-target");
         const targetEl = document.getElementById(targetId);
+        if (!targetEl) return;
 
-        if (!targetEl) {
-            console.error(`Element with ID: ${targetId} does not exist`);
-            return;
-        }
-
+        // Calculate distance between the top of current page and top of view port
         const rect = targetEl.getBoundingClientRect();
         const distance = Math.abs(rect.top);
 
-        closestDistance = Math.min(distance, closestDistance);
-        closestDot = distance < closestDistance ? dot : closestDot;
+        // When new page arrives, it will have the smaller diff distance and become the closest dot
+        if (distance < closestDistance) {
+            closestDistance = distance;
+            closestDot = dot;
+        }
     });
 
+    // Reset all dots & Activate the closest dot
     if (closestDot) {
-        // Reset all dot & Activate the selected dot
         dots.forEach(d => d.classList.remove("active"));
         closestDot.classList.add("active");
     }
 };
 
-const observer = new IntersectionObserver(
-    (entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-                dots.forEach(dot => {
-                    dot.classList.toggle("active", dot.dataset.target === id);
-                });
-            }
-        });
+// Click dot to navigate pages, and activate closest dot through scrolling
+function initDotSroll() {
+    // Get all dots and sections
+    const dots = document.querySelectorAll(".nav-dot");
+    // Define click event listener (inside the function) (Func Caller)
+    scrollToPageOnClick(dots);
+    // Define scroll event listener (outside the function) (Func Caller & Func Callback)
+    window.addEventListener("scroll", () => activateClosestDotOnScroll(dots));
+}
 
-    }, 
-    { 
-        threshold: 0.5  
-    }
-);
+// Call the init function (Func Caller)
+initDotSroll();
 
-dots.forEach(dot => {
-    const targetId = dot.getAttribute("data-target");
-    const targetEl = document.getElementById(targetId);
-
-    dot.addEventListener("click", () => {
-        if (targetEl) {
-            targetEl.scrollIntoView({ behavior: "smooth" });
-            // highlight immediately
-            dots.forEach(d => d.classList.remove("active"));
-            dot.classList.add("active");
-        }
-    });
-});
-
-updateActiveDot();
-window.addEventListener("scroll", updateActiveDot);
-window.addEventListener("resize", updateActiveDot);
-sections.forEach(section => observer.observe(section));
 
 // ================================
-// PAGE 1 
+// PAGE 1 + PAGE 1.5 (all heroes)
 // ================================
 
 // Select ALL hero sections
@@ -168,102 +146,53 @@ heroes.forEach(hero => heroObserver.observe(hero));
 // ==========================
 // PAGE 2
 // ==========================
-// Ripple parallax movement
-// Ripple parallax movement
-(function() {
-  const bg = document.querySelector('.anecdote .ripple');
-  if (!bg) return;
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) return;
-
-  document.addEventListener('mousemove', (e) => {
-    const x = (e.clientX / window.innerWidth) - 0.5;
-    const y = (e.clientY / window.innerHeight) - 0.5;
-    bg.style.transform = `translate(${clamp(x*18,-20,20)}px, ${clamp(y*18,-20,20)}px) scale(1)`;
-  });
-})();
-
-// Animate anecdote on scroll (replay on each entry)
-(function() {
-  const anecdote = document.getElementById('anecdote-section');
-  if (!anecdote) return;
-
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) {
-    anecdote.classList.add('in-view');
-    anecdote.querySelectorAll('.anecdote-inner, .lead, .author, .question, .explain')
-      .forEach(el => { el.style.opacity = 1; el.style.transform = 'none'; });
-    return;
-  }
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const children = anecdote.querySelectorAll('.lead, .author, .question, .explain');
-
-      if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
-        anecdote.classList.add('in-view');
-        // stagger children
-        children.forEach((el,i) => el.style.transitionDelay = `${120 + i*40}ms`);
-      } else {
-        // remove class so animation can replay
-        anecdote.classList.remove('in-view');
-        children.forEach(el => el.style.transitionDelay = `0ms`);
-      }
-    });
-  }, { threshold: 0.2 });
-
-  observer.observe(anecdote);
-})();
-
-
-
-
-
-
-
-// ==========================
-// PAGE 3
-// ==========================
 
 function initHotspots() {
-  const hotspots = Array.from(document.querySelectorAll(".hotspot"));
-  const infoBox = document.getElementById("earth-layer-info");
-  const earthSection = document.getElementById("earth-structure-section");
-  const defaultMsg = "Hover over or press tab to learn more.";
-  if (!infoBox) { console.warn("No #earth-layer-info element found."); return; }
-  if (!hotspots.length) { console.warn("No .hotspot elements found. Check your HTML."); return; }
+    // Extract relevant HTML elements
+    const hotspots = document.querySelectorAll(".hotspot");
+    const infoBox = document.getElementById("earth-layer-info");
+    // Initialize default msg
+    const defaultMsg = "Hover over or press tab to learn more.";
 
-  const debugShowBoxes = false;
+    // Debug mode
+    debugMode(hotspots, infoBox);
 
-  hotspots.forEach((h, i) => {
-    h.tabIndex = 0; // make focusable
-    h.style.position = h.style.position || "absolute";
-    if (!h.style.width) h.style.width = h.dataset.width || "18%";
-    if (!h.style.height) h.style.height = h.dataset.height || "10%";
-    if (!h.style.left) h.style.left = h.dataset.left || `${20 + i*10}%`;
-    if (!h.style.top) h.style.top = h.dataset.top || "50%";
+    // Actions on buttons
+    hotspots.forEach((h, i) => {
+        // Button styling
+        h.style.position = h.style.position || "absolute";
+        h.style.left = h.style.left || `${20 + i*10}%`;
+        h.style.top = h.style.top || "50%";
+        h.style.width = h.style.width || "18%";
+        h.style.height = h.style.height || "10%";
+        h.style.background = "transparent";
+        h.style.outline = "none";
 
-    if (debugShowBoxes) {
-      h.style.background = "rgba(255,0,0,0.18)";
-      h.style.outline = "1px solid rgba(255,0,0,0.6)";
-    } else {
-      h.style.background = "transparent";
-      h.style.outline = "none";
-    }
+        // Organize text content on hotspot (Func Definer & Callback)
+        // Keeping track of time prevent the click & disppear glitch
+        let timer = null;
+        const name = h.dataset.name || `Layer ${i+1}`;
+        const desc = h.dataset.desc || "No description supplied.";
+        const show = () => { infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`; }
+        const reset = () => { infoBox.textContent = defaultMsg; }
+        const showWithCountDown = (e) => {
+            // Stop the default action depends on event types
+                // click: submit a form, navigate through URL, toggle checkbox, ...
+                // touchstart: continue to scroll the screen in mobile device
+            e.preventDefault();
+            // Focus on one timer, no need for multiple to accumulate countdown when you click many times
+            clearTimeout(timer);
+            show();
+            // Count down timer
+            timer = setTimeout(reset, 3000);    
+        }
 
-    const name = h.dataset.name || `Layer ${i+1}`;
-    const desc = h.dataset.desc || "No description supplied.";
-
-    const show = () => {
-      infoBox.innerHTML = `<strong>${name}</strong><br>${desc}`;
-    };
-    const reset = () => { infoBox.textContent = defaultMsg; };
-
-    h.addEventListener("mouseenter", show);
-    h.addEventListener("mouseleave", reset);
-    h.addEventListener("focus", show);
-    h.addEventListener("blur", reset);
+        // Switch text content on different Desktop-based events (Func Callback)
+        h.addEventListener("mouseenter", show);
+        h.addEventListener("mouseleave", reset);
+        // For accessibility
+        h.addEventListener("focus", show);
+        h.addEventListener("blur", reset);
 
     let timer = null;
     h.addEventListener("click", (e) => {
@@ -343,6 +272,12 @@ function initHotspots() {
 
     const currentIndex = visibleHotspots.indexOf(document.activeElement);
     if (e.shiftKey) {
+      // SHIFT+TAB: move backwards
+      if (currentIndex === -1 || currentIndex === 0) {
+        e.preventDefault();
+        visibleHotspots[visibleHotspots.length - 1].focus();
+      }
+      // otherwise allow normal backwards behavior within hotspots
     } else {
       if (currentIndex === visibleHotspots.length - 1 || currentIndex === -1) {
         e.preventDefault();
@@ -358,42 +293,56 @@ if (document.readyState === "loading") {
   initHotspots();
 }
 
-
-
 // =================================
-// PAGE 4
+// PAGE 3
 // =================================
 
+// ===================================
+// PAGE 4: EARTHQUAKE CAUSE ANIMATION
+// ===================================
+// Define Paths to specific GIFs
 const featureGIFs = {
-  "Plate Tectonics": "gifs/plate_tectonics.gif",
-  "Faults": "gifs/fault_lines.webp",
-  "Volcanic Activity": "gifs/volcanic_activity.gif",
-  "Seismic Waves": "gifs/seismic_waves.gif",
-  "Human-Induced Seismicity": "gifs/human_seismicity.gif",
-  "Crustal Adjustments": "gifs/crustal_adjustments.gif"
+    "Plate Tectonics": "gifs/plate_tectonics.gif",
+    "Faults": "gifs/fault_lines.webp",
+    "Volcanic Activity": "gifs/volcanic_activity.gif",
+    "Seismic Waves": "gifs/seismic_waves.gif",
+    "Human-Induced Seismicity": "gifs/human_seismicity.gif",
+    "Crustal Adjustments": "gifs/crustal_adjustments.gif"
 };
 
-const gifEl = document.getElementById("feature-gif");
+// Change animation on hover (Func Definer)
+function initChangeAnimation(){
+    // Fetch relevant HTML elements
+    const gifEl = document.getElementById("feature-gif");
+    const featureBoxes = document.querySelectorAll(".feature-box");
 
-const featureBoxes = document.querySelectorAll(".feature-box");
+    // Iterate each box to perform actions
+    featureBoxes.forEach(box => {
+        // Change a corresponding animation on hover
+        box.addEventListener("mouseenter", () => {
+            // Filter feature by title
+            const title = box.querySelector("h3").textContent.trim();
+            if (featureGIFs[title]) {
+                // Change animation content
+                gifEl.src = featureGIFs[title];
+                gifEl.style.display = "block";
+            }
+        });
+        // Reset to default animation
+        box.addEventListener("mouseleave", () => {
+            // Change to default animation content
+            gifEl.style.display = "gifs/evolution2.gif";
+            gifEl.src = "gifs/evolution2.gif";
+        });
+    });
+}
 
-featureBoxes.forEach(box => {
-  box.addEventListener("mouseenter", () => {
-    const title = box.querySelector("h3").textContent.trim();
-    if (featureGIFs[title]) {
-      gifEl.src = featureGIFs[title];
-      gifEl.style.display = "block";
-    }
-  });
+// Call the init function (Func Caller)
+initChangeAnimation();
 
-  box.addEventListener("mouseleave", () => {
-    gifEl.style.display = "gifs/evolution2.gif";
-    gifEl.src = "gifs/evolution2.gif";
-  });
-});
 
 // ==========================
-// PAGE 5
+// PAGE 4
 // ==========================
 // VARIABLE INITIALIZATION ----------------------------------------------------
 const svg1 = d3.select("#globe-svg");
@@ -471,24 +420,24 @@ const drag_behavior = d3.drag()
         // Update the current X,Y coordinates
         lastX1 = event.x;
         lastY1 = event.y;
-    })
+    });
 
 plotBaseSphere(svg1, sphereData, 'globe-sphere1')
 svg1.call(drag_behavior)          // <-- fix here
-plotCountriesRegions(svg1, countryData, 'country1', '#E31F07')
+plotCountriesRegions(svg1, countryData, 'country1')
 plotEarthquakesPoints(svg1, earthquakeData)
 createGradientLegend(earthquakeData)
 resizeGlobe1(svg1, path1, projection1, 'globe-sphere1', 'country1');
 
 plotBaseSphere(svg1R, sphereData, 'globe-sphere1R')
 svg1R.call(drag_behavior)         // <-- fix here
-plotCountriesRegions(svg1R, countryData, 'country1R', '#2156e9')
+plotCountriesRegions(svg1R, countryData, 'country1R')
 plotStationsPoints(svg1R, stationData)
 resizeGlobe1(svg1R, path1R, projection1R, 'globe-sphere1R', 'country1R');
 // ----------------------------------------------------------------------------
 
 // FUNCTION DEFINITION --------------------------------------------------------
-// Function to plot empty dark with white outline globe (Func Definer)
+// Plot empty dark with white outline globe (Func Definer)
 function plotBaseSphere(selection, data, idName) {
     selection.append("path")
         // Input Sphere data
@@ -502,11 +451,10 @@ function plotBaseSphere(selection, data, idName) {
 }
 
 // Function to plot country to globe & Handle TOOLTIP HOVER INTERACTIONS (Func Definer)
-function plotCountriesRegions(selection, data, className, highlightColor = "#2156e9ff") {
-  const countryGeoNameData = topojson.feature(data, data.objects.countries).features;
-
-  const countriesGroup = selection.append("g")
-    .attr("class", "countries");
+function plotCountriesRegions(selection, data, className) {
+    const countryGeoNameData = topojson.feature(data, data.objects.countries).features;
+    const countriesGroup1 = selection.append("g")
+        .attr("class", "countries");
 
   countriesGroup.selectAll(`.${className}`)
     .data(countryGeoNameData)
@@ -529,7 +477,7 @@ function plotCountriesRegions(selection, data, className, highlightColor = "#215
     });
 }
 
-// Function to plot earthquake spot to globe & Handle TOOLTIP HOVER INTERACTIONS (Func Definer)
+// Plot earthquake spot to globe & Handle TOOLTIP HOVER INTERACTIONS (Func Definer)
 function plotEarthquakesPoints(selection, data) {
     const minMag = d3.min(data, d => d.mag);
     const maxMag = d3.max(data, d => d.mag);
@@ -599,7 +547,7 @@ function plotEarthquakesPoints(selection, data) {
 });
 }
 
-// Function to plot seismic stations to globe & Handle TOOLTIP HOVER INTERACTIONS (Func Definer)
+// Plot seismic stations to globe & Handle TOOLTIP HOVER INTERACTIONS (Func Definer)
 function plotStationsPoints(selection, data) {
     const tri = d3.symbol().type(d3.symbolTriangle).size(90);
 
@@ -660,7 +608,7 @@ function plotStationsPoints(selection, data) {
         });
 }
 
-// Function to update earthquakes on rotation or resize (Func Definer)
+// Update earthquakes on rotation or resize (Func Definer)
 function updateEarthquakes() {
     svg1.selectAll(".earthquakes circle")
         // Update X,Y positions with projection
@@ -671,7 +619,7 @@ function updateEarthquakes() {
         );
 }
 
-// Function to update stations on rotation or resize (Func Definer)
+// Update stations on rotation or resize (Func Definer)
 function updateStations() {
     svg1R.selectAll(".stations .station")
         .attr("transform", d => {
@@ -681,7 +629,7 @@ function updateStations() {
         .attr("opacity", d => isPointVisible(d.longitude, d.latitude, rotate1) ? 0.95 : 0);
 }
 
-// Function determine how a point should be hidden (Func Definer)
+// Determine how a point should be hidden (Func Definer)
 function isPointVisible(lon, lat, rotate) {
     const λ = lon * Math.PI/180;
     const φ = lat * Math.PI/180;
@@ -695,7 +643,7 @@ function isPointVisible(lon, lat, rotate) {
     return cosc > 0;
 }
 
-// Function create the legend for globe with earthquake spots (Func Definer)
+// Create the legend for globe with earthquake spots (Func Definer)
 function createGradientLegend(data) {
   if (!data || data.length === 0) return;
 
@@ -708,7 +656,7 @@ function createGradientLegend(data) {
   document.getElementById("legend-max").textContent = maxMag;
 }
 
-// Function to resize global to fit current container (Func Definer)
+// Resize global to fit current container (Func Definer)
 function resizeGlobe1(selection, pathFunc, projectionFunc, idNameSphere, classNameCountry) {
     const containerWidth = selection.node().parentNode.getBoundingClientRect().width;
 
@@ -993,18 +941,15 @@ toggleButtons.forEach(btn => {
   applyActiveBox(activeLayer);
 })();
 
-// ==========================
-// PAGE 6
-// ==========================
 
+// ==================
+// PAGE 7: NEWS INFO 
+// ==================
 document.addEventListener("DOMContentLoaded", () => {
   const flipCards = document.querySelectorAll(".flip-card");
-
   flipCards.forEach(card => {
     card.addEventListener("click", () => {
       card.querySelector(".flip-card-inner").classList.toggle("flipped");
     });
   });
 });
-
-
