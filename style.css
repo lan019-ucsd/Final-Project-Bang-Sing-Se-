@@ -15,7 +15,7 @@ html, body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+html {
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   overflow-x: hidden;
