@@ -34,7 +34,7 @@
 </header>
 
 <!-- Page 2 (Anecdote)-->
-<header id="anecdote-section" class="anecdote" role="region" aria-labelledby="anecdote-date">
+<header id="anecdote-section" class="anecdote full-page" role="region" aria-labelledby="anecdote-date">
   <div class="anecdote-bg" aria-hidden="true">
     <div class="ripple"></div>
     <svg class="grain" width="0" height="0" aria-hidden="true">
@@ -201,23 +201,20 @@
   </div>
 </section>
 
-
 <!-- Page 5 (2 Globes + Zoomed Country) -->
 
-<section id="country-detail-section">
+<section id="country-detail-section" class="full-page">
   <div class="globe-column">
     
-    <!-- Put these two boxes where you want them to appear (inside .globe-column) -->
-  <div class="globe-toggle-boxes">
-    <div id="box-stations" class="globe-toggle-box active" data-mode="stations" role="button" tabindex="0" aria-pressed="true">
-      <h4>Stations</h4>
-    </div>
+    <div class="globe-toggle-boxes">
+      <div id="box-stations" class="globe-toggle-box active" data-mode="stations" role="button" tabindex="0" aria-pressed="true">
+        <h4>Stations</h4>
+      </div>
 
-    <div id="box-magnitudes" class="globe-toggle-box" data-mode="earthquakes" role="button" tabindex="0" aria-pressed="false">
-      <h4>Magnitudes</h4>
+      <div id="box-magnitudes" class="globe-toggle-box" data-mode="earthquakes" role="button" tabindex="0" aria-pressed="false">
+        <h4>Magnitudes</h4>
+      </div>
     </div>
-  </div>
-
 
     <!-- Top globe -->
     <div class="globe-container">
@@ -228,33 +225,64 @@
     <!-- Bottom globe -->
     <div class="globe-container">
       <div class="globe-title2">Earthquake Magnitudes</div>
-      <div class="legend-container">
-        <div class="legend-title">Magnitude</div>
-        <div class="legend-bar"></div>
-        <div class="legend-labels">
-          <span id="legend-max">0</span>
-          <span id="legend-mid">0</span>
-          <span id="legend-min">0</span>
+        <div class="legend-container">
+          <div class="legend-title">Magnitude</div>
+          <div class="legend-bar"></div>
+          <div class="legend-labels">
+            <span id="legend-max">0</span>
+            <span id="legend-mid">0</span>
+            <span id="legend-min">0</span>
+          </div>
+        </div>
+        <svg id="globe-svg"></svg>
+      </div>
+    </div>
+
+    <div class="country-info">
+      <h2 id="country-name">Search for a country's data.</h2>
+      <div class="country-search">
+        <input type="text" id="country-input" placeholder="Enter a country name...">
+        <button id="country-search-btn">Search</button>
+      </div>
+
+      <svg id="country-map" width="100%" height="300px"></svg>
+    </div>
+
+    <div class="insights-column">
+      <div class="insights-cards">
+        <div class="insight-card">
+          <h4>United States:</h4>
+          <p>
+            Hawaii and California appear to be lacking in seismic activity. 
+            Are they relatively safe to be in based on this information?</p>
+        </div>
+    
+        <div class="insight-card">
+          <h4>Philippines & Japan:</h4>
+          <p>
+            Both experience high earthquake activity, and support our positive stance:
+            If tectonic activity exists, then earthquakes will be recorded in that region.
+          </p>
+        </div>
+    
+        <div class="insight-card">
+          <h4>Libya, Morocco, Algeria, Sudan, Egypt, & Tunisia:</h4>
+          <p>
+            This collective of Northern Africa lacks stations to properly detect earthquakes.
+            There exists only one recorded earthquake in Morocco across all of these countries.
+            Contrapositively, this fails-- We have no seismic coverage in that country, but we recorded tectonic activity.
+          </p>
+        </div>
+
+        <div class="insight-card">
+          <h4>Other countries of interest for you to explore:</h4>
+          <p>South Africa, Australia, Indonesia, Russia, & Chile</p>
         </div>
       </div>
-      <svg id="globe-svg"></svg>
     </div>
-  </div>
-
-  <div class="country-info">
-    <h2 id="country-name">Search for a country's data.</h2>
-    <div class="country-search">
-      <input type="text" id="country-input" placeholder="Enter a country name...">
-      <button id="country-search-btn">Search</button>
-    </div>
-    <div id="country-info">
-      <p id="country-result">Country data will appear here.</p>
-    </div>
-    <svg id="country-map" width="100%" height="300px"></svg>
-  </div>
 </section>
 
-<!-- Page 6: (California Earthquake Heatmap) -->
+<!-- Page 7: (California Earthquake Heatmap) -->
 <section id="heatmap-section" class="full-page">
   <h2>California Earthquake Heatmap</h2>
   <p>Animated heatmap of earthquakes across California over time.</p>
@@ -315,7 +343,7 @@
 </div>
 </section>
 
-<!-- Page 7: (News -->
+<!-- Page 8: (News) -->
 <section id="news-section" class="full-page">
   <h2>Living With Earthquakes</h2>
   <p>Real experiences, reports, and takeaways for earthquake-prone regions.</p>
@@ -425,8 +453,7 @@
   <span class="nav-dot" data-target="anecdote-section"></span>
   <span class="nav-dot" data-target="earth-structure-section"></span>
   <span class="nav-dot" data-target="map-section"></span>
-  <span class="nav-dot" data-target="country-detail-section"></span>
-  <span class="nav-dot" data-target="heatmap-section"></span>
+  <span class="nav-dot" data-target="country-detail-section"></span>  <span class="nav-dot" data-target="heatmap-section"></span>
   <span class="nav-dot" data-target="news-section"></span>
 </div>
 

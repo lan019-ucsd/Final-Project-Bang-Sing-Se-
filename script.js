@@ -74,7 +74,8 @@ const tooltip = d3.select("#globe-tooltip");
 // DOT FOR PAGES
 // ==========================
 const dots = document.querySelectorAll(".nav-dot");
-const sections = document.querySelectorAll("section, header.hero, header.anecdote");
+const sections = document.querySelectorAll(".full-page");
+
 
 const updateActiveDot = () => {
     let closestDot = null;
