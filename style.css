@@ -97,6 +97,12 @@ section, header.hero {
   z-index:0;
 }
 
+.hero-content-box {
+  background: red;
+  padding: 1.75rem 2rem;
+  border-radius: 14px;
+}
+
 .hero h1,
 .hero p {
   opacity: 0;
@@ -126,9 +132,22 @@ section, header.hero {
   max-width: 800px;
   line-height: 1.6;
   opacity: 0.9;
-  color: #000000;
+  color: #f8f7f7;
   font-weight: 400; /* semi-bold */
+}
 
+
+.lead1 {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  line-height: 1.8;
+  color: rgba(255,255,255,0.94);
+  background: #6c6c6c;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 420ms;
+  max-height: calc(100vh - 4rem);  /* ensure content fits inside viewport */
+  overflow-y: auto;
 }
 
 @keyframes pulse {
@@ -141,6 +160,8 @@ section, header.hero {
   0% { opacity: 0; transform: translateY(30px); }
   100% { opacity: 1; transform: translateY(0); }
 }
+
+
 
 /* ========================== */
 /* PAGE 2 (Anecdotes) */
@@ -163,8 +184,7 @@ section, header.hero {
 }
 
 .anecdote-inner {
-    padding-top: 5vh; /* moves content down 5% of viewport height */
-
+  padding-top: 5vh; /* moves content down 5% of viewport height */
   position: relative;
   z-index: 2;
   width: 100%;
