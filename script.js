@@ -416,7 +416,6 @@ featureBoxes.forEach(box => {
     gifEl.src = "gifs/evolution2.gif";
   });
 });
-
 // ==========================
 // PAGE 5 (2 Globes + Country)
 // ==========================
