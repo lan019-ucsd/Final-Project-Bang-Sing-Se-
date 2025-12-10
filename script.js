@@ -422,7 +422,7 @@ featureBoxes.forEach(box => {
 });
 
 // ==========================
-// PAGE 5
+// PAGE 5 (2 Globes + Country)
 // ==========================
 // VARIABLE INITIALIZATION ----------------------------------------------------
 const svg1 = d3.select("#globe-svg");
@@ -1135,10 +1135,8 @@ boxMagnitudes.addEventListener("click", () => applyActiveBox("earthquakes"));
 // Initialize
 applyActiveBox(activeLayer);
 
-
-
 // ==========================
-// PAGE 6
+// PAGE 7 (Flip Cards)
 // ==========================
 
 document.addEventListener("DOMContentLoaded", () => {
