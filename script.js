@@ -74,7 +74,7 @@ const tooltip = d3.select("#globe-tooltip");
 // DOT FOR PAGES
 // ==========================
 const dots = document.querySelectorAll(".nav-dot");
-const sections = document.querySelectorAll("section, header.hero, header.anecdote-section");
+const sections = document.querySelectorAll("section, header.hero, header.anecdote");
 
 const updateActiveDot = () => {
     let closestDot = null;
@@ -114,7 +114,7 @@ const observer = new IntersectionObserver(
 
     }, 
     { 
-        threshold: 0.5  
+        threshold: 0.1  
     }
 );
 
@@ -232,23 +232,19 @@ heroes.forEach(hero => heroObserver.observe(hero));
     return;
   }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const children = anecdote.querySelectorAll('.lead, .author, .question, .explain');
-
-      if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
-        anecdote.classList.add('in-view');
-        // stagger children
-        children.forEach((el,i) => el.style.transitionDelay = `${120 + i*40}ms`);
-      } else {
-        // remove class so animation can replay
-        anecdote.classList.remove('in-view');
-        children.forEach(el => el.style.transitionDelay = `0ms`);
-      }
-    });
-  }, { threshold: 0.2 });
-
-  observer.observe(anecdote);
+  const anecdoteObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const children = anecdote.querySelectorAll('.lead, .author, .question, .explain');
+    if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
+      anecdote.classList.add('in-view');
+      children.forEach((el,i) => el.style.transitionDelay = `${120 + i*40}ms`);
+    } else {
+      anecdote.classList.remove('in-view');
+      children.forEach(el => el.style.transitionDelay = `0ms`);
+    }
+  });
+}, { threshold: 0.2 });
+anecdoteObserver.observe(anecdote);
 })();
 
 // ==========================
