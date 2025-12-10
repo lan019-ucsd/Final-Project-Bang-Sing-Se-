@@ -917,6 +917,8 @@ section, header.hero {
   min-height: 92px;
   max-height: 250px;
   overflow: auto;
+    cursor: pointer;   /* indicate hoverable */
+
 }
 
 .feature-box1 h3 {
@@ -932,6 +934,12 @@ section, header.hero {
   margin: 0.25rem 0;
   padding-left: 0.5rem;
   color: #c9c9c9;
+}
+
+.feature-box1:hover {
+  background: rgb(93, 53, 53);  /* slightly lighter */
+  transform: translateY(-4px);             /* lifts the box */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3); /* shadow effect */
 }
 
 /* ========================== */
