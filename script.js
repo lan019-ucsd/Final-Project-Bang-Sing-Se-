@@ -69,6 +69,55 @@ console.log(sphereData)
 const tooltip = d3.select("#globe-tooltip");
 
 // ==========================
+// Dark/Light Mode 
+// ==========================
+// THEME TOGGLE: respects OS preference, stores choice in localStorage
+(function () {
+  const toggleBtn = document.getElementById('theme-toggle');
+  const label = document.getElementById('theme-toggle-label');
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.classList.add('theme-light');
+      label && (label.textContent = 'Light');
+      toggleBtn && toggleBtn.setAttribute('aria-pressed', 'true');
+    } else {
+      document.documentElement.classList.remove('theme-light');
+      label && (label.textContent = 'Dark');
+      toggleBtn && toggleBtn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  // init: stored choice -> OS preference -> dark fallback
+  const stored = localStorage.getItem('theme'); // 'light' or 'dark'
+  if (stored) {
+    applyTheme(stored);
+  } else {
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    applyTheme(prefersLight ? 'light' : 'dark');
+  }
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const nowLight = document.documentElement.classList.toggle('theme-light');
+      const theme = nowLight ? 'light' : 'dark';
+      applyTheme(theme);
+      localStorage.setItem('theme', theme);
+    });
+  }
+
+  // Optional: respond to OS change if user hasn't picked
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+      if (!localStorage.getItem('theme')) {
+        applyTheme(e.matches ? 'light' : 'dark');
+      }
+    });
+  }
+})();
+
+
+// ==========================
 // DOT FOR PAGES
 // ==========================
 const dots = document.querySelectorAll(".nav-dot");

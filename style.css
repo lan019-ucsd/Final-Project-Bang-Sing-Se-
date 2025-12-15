@@ -2,6 +2,53 @@
 /* RESET + BASE STYLES */
 /* ========================== */
 
+/* -------------------------
+   Theme variables + defaults
+   Paste this at top of style.css
+   ------------------------- */
+:root {
+  /* Neutral / dark defaults (match your original dark look) */
+  --bg: linear-gradient(to bottom, #0f0d0d, #030405);
+  --page-bg-single: #0f0d0d;
+  --panel: rgba(255,255,255,0.04);
+  --card-bg: rgba(255,255,255,0.03);
+  --text: #ffffff;
+  --muted: #c9c9c9;
+  --accent: #5878d8;
+  --accent-2: #903b3b;
+  --shadow: 0 8px 30px rgba(0,0,0,0.6);
+  --nav-dot: #ccc;
+  --nav-dot-active: #5878d8;
+  --glass: rgba(255,255,255,0.04);
+}
+
+/* Light theme overrides */
+.theme-light {
+  --bg: linear-gradient(to bottom, #fbfbfb, #f1f5f9);
+  --page-bg-single: #fbfbfb;
+  --panel: rgba(12,20,30,0.03);
+  --card-bg: rgba(255,255,255,0.92);
+  --text: #0f1720;
+  --muted: #475569;
+  --accent: #2f56a2;      /* blue-ish */
+  --accent-2: #a02d2d;    /* red-ish */
+  --shadow: 0 8px 30px rgba(12,20,30,0.06);
+  --nav-dot: rgba(12,20,30,0.25);
+  --nav-dot-active: #2f56a2;
+  --glass: rgba(255,255,255,0.6);
+}
+
+/* Quick global application */
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background .22s ease, color .22s ease;
+}
+
+/* small helper so you can refer to a page background color */
+.bg-page { background: var(--page-bg-single); }
+
+
 * { box-sizing: border-box; }
 
 html, body {
